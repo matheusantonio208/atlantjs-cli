@@ -1,3 +1,7 @@
+import { info } from 'console'
+
+const { system } = require('gluegun')
+
 module.exports = {
   name: 'create',
   description: 'Create the initial files of the application',
@@ -9,6 +13,8 @@ module.exports = {
     } = toolbox
 
     const name = parameters.first
+
+    const urlRepo = parameters.second
 
     if (!name) {
       error('App name must be specified')
@@ -67,6 +73,12 @@ module.exports = {
     })
 
     await template.generate({
+      template: 'core/package.json.ejs',
+      target: `${name}/package.json`,
+      props: { name },
+    })
+
+    await template.generate({
       template: 'core/README.md.ejs',
       target: `${name}/README.md`,
       props: { name },
@@ -76,6 +88,26 @@ module.exports = {
       template: 'core/tsconfig.json',
       target: `${name}/tsconfig.json`,
     })
+
+    info(`Run yarn install`)
+    await system.run(`cd ${name} && yarn`)
+
+    info(`Start git`)
+    await system.run(`
+      cd ${name} &&
+      git init && 
+      git add . && 
+      git commit -m "feat: add core layer" &&
+      git branch -M main
+    `)
+
+    if (urlRepo) {
+      await system.run(`
+        cd ${name} &&
+        git remote add origin ${urlRepo} &&
+        git push -u origin main
+      `)
+    }
 
     success(`Generated ${name} app.`)
   },
