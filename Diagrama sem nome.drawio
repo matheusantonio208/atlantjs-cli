@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2022-07-27T04:40:11.966Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36" etag="7aXTFfqdSEGtJ6Hyu31z" version="20.2.0" type="github">
+<mxfile host="app.diagrams.net" modified="2022-07-27T04:47:54.014Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36" etag="AYGlJOMFyF3xXzL6HNlI" version="20.2.0" type="github">
   <diagram id="BnmF_AK0YvOshNtcrw-g" name="Página-1">
     <mxGraphModel dx="3195" dy="1173" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -11,7 +11,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="cyFt_1vXVeOcTQ0V9GpX-1" value="merge ( &lt;font color=&quot;#990000&quot;&gt;&lt;b&gt;originCodeJson&lt;/b&gt;, &lt;b&gt;userCodeJson&lt;/b&gt;&lt;/font&gt; )" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
-          <mxGeometry x="813" y="46" width="154" height="60" as="geometry" />
+          <mxGeometry x="813" y="54" width="154" height="44" as="geometry" />
         </mxCell>
         <mxCell id="cyFt_1vXVeOcTQ0V9GpX-60" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;fontSize=10;startArrow=none;startFill=0;endArrow=classic;endFill=1;strokeWidth=1;" edge="1" parent="1" source="cyFt_1vXVeOcTQ0V9GpX-2" target="cyFt_1vXVeOcTQ0V9GpX-1">
           <mxGeometry relative="1" as="geometry" />
@@ -86,8 +86,11 @@
         <mxCell id="cyFt_1vXVeOcTQ0V9GpX-25" value="&lt;b&gt;&lt;font color=&quot;#00cc00&quot;&gt;CRIA&lt;/font&gt;&lt;/b&gt; Código&lt;br&gt;[Local]&lt;br&gt;.ts" style="whiteSpace=wrap;html=1;rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=0" vertex="1" parent="1">
           <mxGeometry x="431" y="206" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="cyFt_1vXVeOcTQ0V9GpX-36" value="&lt;font color=&quot;#00cc00&quot;&gt;&lt;b&gt;SUBSTITUI&lt;/b&gt;&lt;/font&gt; Código&lt;br&gt;[Local]&lt;br&gt;.ts" style="whiteSpace=wrap;html=1;rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=0" vertex="1" parent="1">
-          <mxGeometry x="2382.5" y="347" width="120" height="60" as="geometry" />
+        <mxCell id="cyFt_1vXVeOcTQ0V9GpX-106" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=1 1;fontSize=12;fontColor=#990000;startArrow=none;startFill=0;endArrow=none;endFill=0;strokeWidth=1;" edge="1" parent="1" source="cyFt_1vXVeOcTQ0V9GpX-36" target="cyFt_1vXVeOcTQ0V9GpX-105">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cyFt_1vXVeOcTQ0V9GpX-36" value="transformInCodeFile(&lt;b&gt;&lt;font color=&quot;#990000&quot;&gt;codeJson&lt;/font&gt;&lt;/b&gt;)" style="whiteSpace=wrap;html=1;rounded=0;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=0" vertex="1" parent="1">
+          <mxGeometry x="2332.25" y="475" width="220.5" height="27" as="geometry" />
         </mxCell>
         <mxCell id="cyFt_1vXVeOcTQ0V9GpX-41" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;dashed=1;startArrow=none;startFill=0;endArrow=none;endFill=0;strokeWidth=1;dashPattern=1 2;" edge="1" parent="1" source="cyFt_1vXVeOcTQ0V9GpX-40" target="cyFt_1vXVeOcTQ0V9GpX-23">
           <mxGeometry relative="1" as="geometry" />
@@ -145,7 +148,7 @@
         <mxCell id="cyFt_1vXVeOcTQ0V9GpX-66" value="inContentConflict?" style="rhombus;whiteSpace=wrap;html=1;rounded=0;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;fontStyle=1" vertex="1" parent="1">
           <mxGeometry x="2382.5" y="2" width="119" height="119" as="geometry" />
         </mxCell>
-        <mxCell id="cyFt_1vXVeOcTQ0V9GpX-72" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontSize=10;fontColor=#00CC00;startArrow=none;startFill=0;endArrow=classic;endFill=1;strokeWidth=1;" edge="1" parent="1" source="cyFt_1vXVeOcTQ0V9GpX-70" target="cyFt_1vXVeOcTQ0V9GpX-36">
+        <mxCell id="cyFt_1vXVeOcTQ0V9GpX-113" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;dashed=1;dashPattern=1 1;fontSize=12;fontColor=#FF00FF;startArrow=none;startFill=0;endArrow=none;endFill=0;strokeWidth=1;" edge="1" parent="1" source="cyFt_1vXVeOcTQ0V9GpX-70" target="cyFt_1vXVeOcTQ0V9GpX-111">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="cyFt_1vXVeOcTQ0V9GpX-70" value="Adiciona tags git&lt;br&gt;(// &amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&lt;br&gt;// &amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;)" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
@@ -160,7 +163,7 @@
         <mxCell id="cyFt_1vXVeOcTQ0V9GpX-93" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;dashed=1;dashPattern=1 1;fontSize=12;fontColor=#990000;startArrow=none;startFill=0;endArrow=none;endFill=0;strokeWidth=1;" edge="1" parent="1" source="cyFt_1vXVeOcTQ0V9GpX-75" target="cyFt_1vXVeOcTQ0V9GpX-66">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="cyFt_1vXVeOcTQ0V9GpX-75" value="verifyContentConflicts &lt;br&gt;( &lt;font color=&quot;#990000&quot;&gt;&lt;b&gt;originCodeJson&lt;/b&gt;, &lt;font style=&quot;font-weight: bold;&quot;&gt;userCodeJson&lt;/font&gt;&lt;/font&gt;&lt;font style=&quot;font-weight: bold;&quot; color=&quot;#ffb570&quot;&gt; &lt;/font&gt;)" style="whiteSpace=wrap;html=1;rounded=0;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+        <mxCell id="cyFt_1vXVeOcTQ0V9GpX-75" value="verifyContentConflicts &lt;br&gt;( &lt;font color=&quot;#990000&quot;&gt;&lt;b&gt;originCodeJson&lt;/b&gt;, &lt;font style=&quot;font-weight: bold;&quot;&gt;userCodeJson&lt;/font&gt;&lt;/font&gt;&lt;font style=&quot;font-weight: bold;&quot; color=&quot;#ffb570&quot;&gt; &lt;/font&gt;): &lt;font color=&quot;#ff00ff&quot;&gt;&lt;b&gt;CodeJSON&lt;/b&gt;&lt;/font&gt;" style="whiteSpace=wrap;html=1;rounded=0;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
           <mxGeometry x="2137" y="31.5" width="167" height="60" as="geometry" />
         </mxCell>
         <mxCell id="cyFt_1vXVeOcTQ0V9GpX-81" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;dashed=1;dashPattern=1 1;fontSize=12;fontColor=#000000;startArrow=none;startFill=0;endArrow=none;endFill=0;strokeWidth=1;" edge="1" parent="1" source="cyFt_1vXVeOcTQ0V9GpX-79" target="cyFt_1vXVeOcTQ0V9GpX-75">
@@ -178,10 +181,15 @@
         <mxCell id="cyFt_1vXVeOcTQ0V9GpX-83" value="Remove tags&lt;br&gt;(// &amp;lt;vars.top&amp;gt;&lt;br&gt;// &amp;lt;/vars.top&amp;gt;)" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
           <mxGeometry x="2650" y="31.5" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="cyFt_1vXVeOcTQ0V9GpX-89" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;dashed=1;dashPattern=1 1;fontSize=12;fontColor=#000000;startArrow=none;startFill=0;endArrow=none;endFill=0;strokeWidth=1;" edge="1" parent="1" source="cyFt_1vXVeOcTQ0V9GpX-87" target="cyFt_1vXVeOcTQ0V9GpX-36">
+        <mxCell id="cyFt_1vXVeOcTQ0V9GpX-92" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;dashed=1;dashPattern=1 1;fontSize=12;fontColor=#000000;startArrow=none;startFill=0;endArrow=none;endFill=0;strokeWidth=1;" edge="1" parent="1" source="cyFt_1vXVeOcTQ0V9GpX-87" target="cyFt_1vXVeOcTQ0V9GpX-90">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="cyFt_1vXVeOcTQ0V9GpX-92" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;dashed=1;dashPattern=1 1;fontSize=12;fontColor=#000000;startArrow=none;startFill=0;endArrow=none;endFill=0;strokeWidth=1;" edge="1" parent="1" source="cyFt_1vXVeOcTQ0V9GpX-87" target="cyFt_1vXVeOcTQ0V9GpX-90">
+        <mxCell id="cyFt_1vXVeOcTQ0V9GpX-109" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;dashed=1;dashPattern=1 1;fontSize=12;fontColor=#FF00FF;startArrow=none;startFill=0;endArrow=none;endFill=0;strokeWidth=1;" edge="1" parent="1" source="cyFt_1vXVeOcTQ0V9GpX-87">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2442.5" y="346" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cyFt_1vXVeOcTQ0V9GpX-112" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=1 1;fontSize=12;fontColor=#FF00FF;startArrow=none;startFill=0;endArrow=none;endFill=0;strokeWidth=1;" edge="1" parent="1" source="cyFt_1vXVeOcTQ0V9GpX-87" target="cyFt_1vXVeOcTQ0V9GpX-111">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="cyFt_1vXVeOcTQ0V9GpX-87" value="Remove tags&lt;br&gt;(// &amp;lt;vars.top&amp;gt;&lt;br&gt;// &amp;lt;/vars.top&amp;gt;)" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
@@ -204,6 +212,17 @@
         </mxCell>
         <mxCell id="cyFt_1vXVeOcTQ0V9GpX-101" value="Alterações CLI&lt;br&gt;[tags cli]" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
           <mxGeometry x="-158" y="46" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="cyFt_1vXVeOcTQ0V9GpX-105" value="&lt;font color=&quot;#00cc00&quot;&gt;&lt;b&gt;SUBSTITUI&lt;/b&gt;&lt;/font&gt;&amp;nbsp;Código&lt;br&gt;[Local]&lt;br&gt;.ts" style="whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;rounded=0;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="2382" y="588" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="cyFt_1vXVeOcTQ0V9GpX-110" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;dashed=1;dashPattern=1 1;fontSize=12;fontColor=#FF00FF;startArrow=none;startFill=0;endArrow=none;endFill=0;strokeWidth=1;" edge="1" parent="1" target="cyFt_1vXVeOcTQ0V9GpX-36">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2442.5" y="384" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cyFt_1vXVeOcTQ0V9GpX-111" value="Merge JSONs" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="2382.5" y="346" width="120" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
