@@ -1,5 +1,5 @@
 import { info } from 'console'
-import { lowerFirstLetter, upperFirstLetter } from '../utils/utils'
+import { lowerFirstLetter, upperFirstLetter } from '../utils/index'
 
 const { system } = require('gluegun')
 
@@ -210,7 +210,6 @@ module.exports = {
       target: `${name}/src/schemas/${moduleNameUpper}.ts`,
       props: { moduleNameUpper, moduleNameLower },
     })
-
 
     info(`Run yarn install`)
     await system.run(`cd ${name} && yarn`)
