@@ -5,6 +5,7 @@ import {
   parseString,
   createFiles,
   save,
+  removeTempFiles,
 } from '../extends/file-manager'
 import { resolve } from 'path'
 
@@ -19,21 +20,26 @@ module.exports = {
     } = toolbox
 
     const name: string = parameters.first ?? error('App name must be specified')
-    const coreFile = createFiles('core', name)
+    const backendFiles = createFiles('back-end/api', name)
 
-    coreFile.map(async (file) => {
+    backendFiles.map(async (file) => {
       await createTempFiles(template, file)
-      const fileTempJson = parseJson(resolve('temp', file.target))
+      const fileTempJson = parseJson(`${'../temp/' + file.target}`)
 
       const isFileUserExists = await fileExists(file)
 
       if (isFileUserExists) {
-        console.log('File Exists')
+        console.log('==MERGE FILES==')
       }
 
       const fileTempString = await parseString(fileTempJson)
 
-      save(resolve('user', file.target), fileTempString)
+      save(resolve(file.target), fileTempString)
+      await removeTempFiles()
+
+      //corrigir caminhos
+      //deixar cli boita
+      // deixar funcionar todos os comandos
     })
 
     success(`Generated ${name} app.`)

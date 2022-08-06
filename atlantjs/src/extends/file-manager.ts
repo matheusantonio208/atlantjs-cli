@@ -7,6 +7,7 @@ import {
   statSync,
   writeFileSync,
 } from 'fs'
+import * as rimraf from 'rimraf'
 
 export async function createTempFiles(template, file) {
   await template.generate({
@@ -89,4 +90,8 @@ export function createFiles(module: string, appName: string, props?) {
   })
 
   return coreFiles
+}
+
+export async function removeTempFiles() {
+  rimraf.sync(resolve('..', 'temp'))
 }
