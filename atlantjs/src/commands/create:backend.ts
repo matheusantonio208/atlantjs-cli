@@ -19,7 +19,7 @@ module.exports = {
     const {
       parameters,
       template,
-      print: { success, error },
+      print: { success },
     } = toolbox
 
     const FOLDER_NAME_TEMPLATE = 'back-end/api'
