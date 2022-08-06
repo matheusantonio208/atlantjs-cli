@@ -1,4 +1,4 @@
-import { resolve, dirname, join } from 'path'
+import { resolve, join, dirname } from 'path'
 import * as jetpack from 'fs-jetpack'
 import {
   mkdirSync,
@@ -7,9 +7,9 @@ import {
   statSync,
   writeFileSync,
 } from 'fs'
-import * as rimraf from 'rimraf'
+// import * as rimraf from 'rimraf'
 
-const getAllFiles = function (templateFolder, arrayOfFiles?) {
+function getAllFiles(templateFolder, arrayOfFiles?) {
   const dirPath = resolve('src', 'templates', templateFolder)
   let files = readdirSync(dirPath)
 
@@ -33,13 +33,23 @@ const getAllFiles = function (templateFolder, arrayOfFiles?) {
   return templates
 }
 
-export async function createTempFiles(template, file) {
+async function createTempFiles(template, file) {
   await template.generate({
     template: file.template,
     target: resolve('temp', file.target),
     props: file.props,
   })
 }
+
+async function save(filePath, fileString) {
+  mkdirSync(dirname(filePath), { recursive: true })
+  writeFileSync(filePath, fileString)
+}
+
+// async function removeTempFiles() {
+//   const tempFilesPath = resolve('..', 'temp')
+//   rimraf.sync(tempFilesPath)
+// }
 
 export async function createFiles(template, files) {
   files.map(async (file) => {
@@ -58,11 +68,7 @@ export async function createFiles(template, files) {
   })
 }
 
-export async function removeTempFiles() {
-  rimraf.sync(resolve('..', 'temp'))
-}
-
-export function parseJson(filePath) {
+function parseJson(filePath) {
   const content = readFileSync(filePath).toString()
 
   const contentArray = content.split('\n')
@@ -74,7 +80,7 @@ export function parseJson(filePath) {
   return contentJson
 }
 
-export async function parseString(fileJson) {
+async function parseString(fileJson) {
   let content = []
 
   fileJson.map((file, index) => {
@@ -86,12 +92,7 @@ export async function parseString(fileJson) {
   return fileToString
 }
 
-export async function save(filePath, fileString) {
-  mkdirSync(dirname(filePath), { recursive: true })
-  writeFileSync(filePath, fileString)
-}
-
-export async function fileExists(file) {
+async function fileExists(file) {
   return jetpack.existsAsync(file.target)
 }
 

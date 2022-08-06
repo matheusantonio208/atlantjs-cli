@@ -2,11 +2,11 @@ import { loading } from '../utils/pretty-terminal'
 import { system } from 'gluegun'
 
 export async function installPackages(name) {
-  await loading('Install packages', await system.run(`cd ${name} && yarn`))
+  await loading('Install packages', system.run(`cd ${name} && yarn`))
 }
 
 export async function startGit(name, repoUrl) {
-  await loading(
+  loading(
     'Initializing Git',
     await system.run(`
   cd ${name} &&
@@ -18,7 +18,7 @@ export async function startGit(name, repoUrl) {
   )
 
   if (repoUrl) {
-    await loading(
+    loading(
       'Initializing Repository',
       await system.run(`
     cd ${name} &&
