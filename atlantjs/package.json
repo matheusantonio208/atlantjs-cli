@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "atlantjs CLI",
   "types": "build/types/types.d.ts",
+  "private": false,
   "bin": {
     "atlantjs": "bin/atlantjs"
   },
