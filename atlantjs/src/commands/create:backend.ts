@@ -1,9 +1,9 @@
-import { coreFiles } from '../utils/files/core-files'
 import {
   createTempFiles,
   fileExists,
   parseJson,
   parseString,
+  createFiles,
   save,
 } from '../extends/file-manager'
 import { resolve } from 'path'
@@ -19,8 +19,9 @@ module.exports = {
     } = toolbox
 
     const name: string = parameters.first ?? error('App name must be specified')
+    const coreFile = createFiles('core', name)
 
-    coreFiles(name).map(async (file) => {
+    coreFile.map(async (file) => {
       await createTempFiles(template, file)
       const fileTempJson = parseJson(resolve('temp', file.target))
 
