@@ -44,6 +44,5 @@ module.exports = {
     }, 1000)
 
     //corrigir caminhos
-    // deixar funcionar todos os comandos
   },
 }
