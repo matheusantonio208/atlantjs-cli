@@ -7,7 +7,7 @@ import {
   statSync,
   writeFileSync,
 } from 'fs'
-// import * as rimraf from 'rimraf'
+import * as rimraf from 'rimraf'
 
 function getAllFiles(templateFolder, arrayOfFiles?) {
   const dirPath = resolve('src', 'templates', templateFolder)
@@ -46,10 +46,10 @@ async function save(filePath, fileString) {
   writeFileSync(filePath, fileString)
 }
 
-// async function removeTempFiles() {
-//   const tempFilesPath = resolve('..', 'temp')
-//   rimraf.sync(tempFilesPath)
-// }
+export async function removeTempFiles() {
+  const tempFilesPath = resolve('temp')
+  rimraf.sync(tempFilesPath)
+}
 
 export async function createFiles(template, files) {
   files.map(async (file) => {

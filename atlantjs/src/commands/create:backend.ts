@@ -1,4 +1,8 @@
-import { jsonFilesInfo, createFiles } from '../extends/file-manager'
+import {
+  jsonFilesInfo,
+  createFiles,
+  removeTempFiles,
+} from '../extends/file-manager'
 import {
   installPackages,
   // startGit,
@@ -22,9 +26,9 @@ module.exports = {
 
     await createFiles(template, backendFiles)
 
-    setTimeout(async () => {
-      await installPackages(name)
-    }, 1000)
+    await installPackages(name)
+
+    await removeTempFiles()
 
     // await startGit(name, repoUrl)
 

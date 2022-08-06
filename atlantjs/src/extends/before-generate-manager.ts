@@ -2,7 +2,9 @@ import { loading } from '../utils/pretty-terminal'
 import { system } from 'gluegun'
 
 export async function installPackages(name) {
-  await loading('Install packages', system.run(`cd ${name} && yarn`))
+  setTimeout(async () => {
+    await loading('Install packages', system.run(`cd ${name} && yarn`))
+  }, 1000)
 }
 
 export async function startGit(name, repoUrl) {
