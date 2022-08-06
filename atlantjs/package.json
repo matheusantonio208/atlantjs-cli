@@ -1,5 +1,5 @@
 {
-  "name": "atlantjs",
+  "name": "@matheusantoni0/atlantjs",
   "version": "0.0.1",
   "description": "atlantjs CLI",
   "types": "build/types/types.d.ts",
