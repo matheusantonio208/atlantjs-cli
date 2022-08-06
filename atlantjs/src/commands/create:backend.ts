@@ -24,7 +24,7 @@ module.exports = {
 
     backendFiles.map(async (file) => {
       await createTempFiles(template, file)
-      const fileTempJson = parseJson(`${'../temp/' + file.target}`)
+      const fileTempJson = parseJson(resolve('temp', file.target))
 
       const isFileUserExists = await fileExists(file)
 
