@@ -1,5 +1,5 @@
 import {
-  createFiles,
+  jsonFilesInfo,
   createTempFiles,
   fileExists,
   parseJson,
@@ -7,9 +7,12 @@ import {
   removeTempFiles,
   save,
 } from '../extends/file-manager'
-import { info } from 'console'
 import { resolve } from 'path'
-import { system } from 'gluegun'
+import {
+  installPackages,
+  // openProject,
+  // startGit,
+} from '../extends/before-generate-manager'
 
 module.exports = {
   name: 'create:backend',
@@ -26,9 +29,9 @@ module.exports = {
 
     const name: string = parameters.first || '.'
 
-    const { urlRepo } = toolbox.parameters.options
+    // const { repoUrl } = toolbox.parameters.options
 
-    const backendFiles = createFiles(FOLDER_NAME_TEMPLATE, name)
+    const backendFiles = jsonFilesInfo(FOLDER_NAME_TEMPLATE, name)
 
     backendFiles.map(async (file) => {
       await createTempFiles(template, file)
@@ -37,45 +40,26 @@ module.exports = {
       const isFileUserExists = await fileExists(file)
 
       if (isFileUserExists) {
-        console.log('==MERGE FILES (packages.json)==')
+        // console.log('==MERGE FILES (packages.json)==')
       }
 
       const fileTempString = await parseString(fileTempJson)
 
-      save(resolve(file.target), fileTempString)
-      await removeTempFiles()
-
-      info(`Run yarn install`)
-      await system.run(`cd ${name} && yarn`)
-
-      info(`Start git`)
-      await system.run(`
-      cd ${name} &&
-      git init &&
-      git add . &&
-      git commit -m "feat: add back-end layer layer" &&
-      git branch -M main
-    `)
-
-      if (urlRepo) {
-        await system.run(`
-        cd ${name} &&
-        git remote add origin ${urlRepo} &&
-        git push -u origin main
-      `)
-      }
-
-      await system.run(`
-      cd ${name} &&
-      code .
-    `)
-      success(`Generated ${name} app.`)
-
-      //corrigir caminhos
-      //deixar cli boita
-      // deixar funcionar todos os comandos
+      await save(resolve(file.target), fileTempString)
     })
 
+    await removeTempFiles()
+
+    await installPackages(name)
+
+    // await startGit(name, repoUrl)
+
+    // await openProject(name)
+
+    success(`Generated ${name} app.`)
+
+    //corrigir caminhos
+    // deixar funcionar todos os comandos
     success(`Generated ${name} app.`)
   },
 }

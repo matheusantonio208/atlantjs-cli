@@ -1,5 +1,5 @@
 import {
-  createFiles,
+  jsonFilesInfo,
   createTempFiles,
   fileExists,
   parseJson,
@@ -26,7 +26,7 @@ module.exports = {
 
     const name: string = parameters.first || '.'
 
-    const backendFiles = createFiles(FOLDER_NAME_TEMPLATE, name)
+    const backendFiles = jsonFilesInfo(FOLDER_NAME_TEMPLATE, name)
 
     backendFiles.map(async (file) => {
       await createTempFiles(template, file)

@@ -9,12 +9,57 @@ import {
 } from 'fs'
 import * as rimraf from 'rimraf'
 
+const getAllFiles = function (templateFolder, arrayOfFiles?) {
+  const dirPath = resolve('src', 'templates', templateFolder)
+  let files = readdirSync(dirPath)
+
+  arrayOfFiles = arrayOfFiles || []
+
+  files.forEach(function (file) {
+    if (statSync(dirPath + '/' + file).isDirectory()) {
+      arrayOfFiles = getAllFiles(dirPath + '/' + file, arrayOfFiles)
+    } else {
+      arrayOfFiles.push(join(__dirname, dirPath, '/', file))
+    }
+  })
+
+  let templates = []
+
+  arrayOfFiles.map((directory, index) => {
+    directory = directory.toString()
+    templates.push(directory.substring(directory.indexOf(templateFolder)))
+  })
+
+  return templates
+}
+
 export async function createTempFiles(template, file) {
   await template.generate({
     template: file.template,
     target: resolve('temp', file.target),
     props: file.props,
   })
+}
+
+export async function createFiles(template, files) {
+  files.map(async (file) => {
+    await createTempFiles(template, file)
+    const fileTempJson = parseJson(resolve('temp', file.target))
+
+    const isFileUserExists = await fileExists(file)
+
+    if (isFileUserExists) {
+      // console.log('==MERGE FILES (packages.json)==')
+    }
+
+    const fileTempString = await parseString(fileTempJson)
+
+    await save(resolve(file.target), fileTempString)
+  })
+}
+
+export async function removeTempFiles() {
+  rimraf.sync(resolve('..', 'temp'))
 }
 
 export function parseJson(filePath) {
@@ -50,31 +95,7 @@ export async function fileExists(file) {
   return jetpack.existsAsync(file.target)
 }
 
-const getAllFiles = function (templateFolder, arrayOfFiles?) {
-  const dirPath = resolve('src', 'templates', templateFolder)
-  let files = readdirSync(dirPath)
-
-  arrayOfFiles = arrayOfFiles || []
-
-  files.forEach(function (file) {
-    if (statSync(dirPath + '/' + file).isDirectory()) {
-      arrayOfFiles = getAllFiles(dirPath + '/' + file, arrayOfFiles)
-    } else {
-      arrayOfFiles.push(join(__dirname, dirPath, '/', file))
-    }
-  })
-
-  let templates = []
-
-  arrayOfFiles.map((directory, index) => {
-    directory = directory.toString()
-    templates.push(directory.substring(directory.indexOf(templateFolder)))
-  })
-
-  return templates
-}
-
-export function createFiles(module: string, appName: string, props?) {
+export function jsonFilesInfo(module: string, appName: string, props?) {
   const files = getAllFiles(module)
 
   let coreFiles = []
@@ -90,8 +111,4 @@ export function createFiles(module: string, appName: string, props?) {
   })
 
   return coreFiles
-}
-
-export async function removeTempFiles() {
-  rimraf.sync(resolve('..', 'temp'))
 }
