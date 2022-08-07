@@ -1,4 +1,4 @@
-import { resolve, join, dirname } from 'path'
+import { resolve, join, dirname, basename } from 'path'
 import * as jetpack from 'fs-jetpack'
 import {
   mkdirSync,
@@ -63,13 +63,14 @@ export async function createFiles(templateToolbox, filesInfo) {
     if (isFileUserExists) {
       const fileUserJson = parseJson(file.target)
 
-      const fileName = 'api-config'
+      const fileName = basename(file.target).replace(/\.[^/.]+$/, '')
 
-      const fileMergedJson = mergeFiles(fileTempJson, fileUserJson, fileName)
-      fileMergedJson
-      // const fileMergedString = await parseString(fileMergedJson)
+      if (fileName === FileName.API_CONFIG) {
+        const fileMergedJson = mergeFiles(fileTempJson, fileUserJson, fileName)
+        fileMergedJson // const fileMergedString = await parseString(fileMergedJson)
 
-      // await save(resolve(file.target), fileMergedString)
+        // await save(resolve(file.target), fileMergedString)
+      }
     }
 
     const fileTempString = await parseString(fileTempJson)
@@ -135,30 +136,113 @@ enum FileName {
 }
 
 function mergeFiles(fileTempJson, fileUserJson, fileName: string) {
-  const sectionUser = getRanges(fileUserJson, fileName)
+  const { sectionsUser, sectionsTemp } = getAllRanges(
+    fileTempJson,
+    fileUserJson,
+    fileName
+  )
+  sectionsTemp
+  sectionsUser
 
-  console.log(sectionUser)
+  let fileUserArray = []
+
+  fileUserJson.map((line) => {
+    fileUserArray.push(line.content)
+  })
+
+  fileUserArray.splice(
+    sectionsUser['imports'].lineSectionEnd,
+    0,
+    ...sectionsTemp['imports'].contentSection
+  )
+
+  fileUserArray.splice(
+    sectionsUser['imports'].lineSectionStart,
+    0,
+    '<<<<<<< HEAD'
+  )
+
+  fileUserArray.splice(sectionsUser['imports'].lineSectionEnd + 1, 0, '=======')
+  fileUserArray.splice(
+    sectionsUser['imports'].lineSectionEnd +
+      sectionsTemp['imports'].contentSection.length +
+      1,
+    0,
+    '>>>>>>> TEMP'
+  )
+  console.log(fileUserArray)
 }
 
-function getRanges(fileJson, fileName: string) {
-  let sectionStart
-  let sectionEnd
+function getAllRanges(fileTempJson, fileUserJson, fileName) {
+  const sectionsApiFile = [
+    {
+      name: 'constructor',
+      range: {
+        contentSectionStart: 'constructor() {',
+        contentSectionEnd: '// DatabaseDB.start();',
+      },
+    },
+    {
+      name: 'imports',
+      range: {
+        contentSectionStart: 'import',
+        contentSectionEnd: 'class ApiConfig {',
+      },
+    },
+  ]
 
-  if ((fileName = FileName.API_CONFIG)) {
-    sectionStart = '// <imports>'
-    sectionEnd = '// </imports>'
+  if (fileName === FileName.API_CONFIG) {
+    let sectionsUser = {}
+    let sectionsTemp = {}
+
+    sectionsApiFile.map((section) => {
+      const sectionName = section.name
+      const sectionRange = section.range
+
+      Object.assign(
+        sectionsUser,
+        getRange(fileUserJson, sectionName, sectionRange)
+      )
+      Object.assign(
+        sectionsTemp,
+        getRange(fileTempJson, sectionName, sectionRange)
+      )
+    })
+
+    return { sectionsUser, sectionsTemp }
   }
+}
 
-  let sectionRange = { start: '', end: '' }
+function getRange(
+  fileJson,
+  sectionName,
+  { contentSectionStart, contentSectionEnd }
+) {
+  let lineSectionStart
+  let lineSectionEnd
+  let contentSection = []
 
-  fileJson.map((lineJson) => {
+  fileJson.filter((lineJson) => {
     const { line, content } = lineJson
 
-    if (content === sectionStart) {
-      sectionRange.start = line
+    if (content.trim().startsWith(contentSectionStart.trim())) {
+      lineSectionStart === undefined
+        ? (lineSectionStart = line)
+        : lineSectionStart
     }
-    if (content === sectionEnd) {
-      sectionRange.end = line
+
+    if (content.trim().startsWith(contentSectionEnd.trim())) {
+      lineSectionEnd = line
     }
   })
+
+  fileJson.filter((lineJson) => {
+    const { line, content } = lineJson
+
+    if (line >= lineSectionStart && line < lineSectionEnd) {
+      contentSection.push(content)
+    }
+  })
+
+  return { [sectionName]: { lineSectionStart, lineSectionEnd, contentSection } }
 }
