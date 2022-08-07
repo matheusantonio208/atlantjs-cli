@@ -11,7 +11,7 @@ import * as rimraf from 'rimraf'
 import { FileName, filesStructure } from './files-structure'
 
 function getAllFiles(templateFolder: string, arrayOfFiles?) {
-  const PATH_TEMPLATE = resolve('src', 'templates', templateFolder)
+  const PATH_TEMPLATE = resolve(__dirname, '..', 'templates', templateFolder)
 
   let files = readdirSync(PATH_TEMPLATE)
 
