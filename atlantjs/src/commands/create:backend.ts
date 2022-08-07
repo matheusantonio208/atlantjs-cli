@@ -1,14 +1,12 @@
+// import { jsonFilesInfo, removeTempFiles } from '../extends/file-manager'
+import { jsonFilesInfo } from '../extends/file-manager'
 import {
-  jsonFilesInfo,
-  createFiles,
-  // removeTempFiles,
-} from '../extends/file-manager'
-// import {
-//   installPackages,
-//   startGit,
-//   openProject,
-//   startRepository,
-// } from '../extends/before-generate-manager'
+  // installPackages,
+  // startGit,
+  // openProject,
+  // startRepository,
+  createFilesModule,
+} from '../extends/before-generate-manager'
 
 module.exports = {
   name: 'create:backend',
@@ -27,8 +25,8 @@ module.exports = {
     const backendFiles = jsonFilesInfo(FOLDER_API_TEMPLATE, name)
     const coreFiles = jsonFilesInfo(FOLDER_CORE_TEMPLATE, name)
 
-    await createFiles(template, backendFiles)
-    await createFiles(template, coreFiles)
+    await createFilesModule(template, backendFiles, 'backend')
+    await createFilesModule(template, coreFiles, 'core')
 
     // setTimeout(async () => {
     //   const packageInstalled = await installPackages(name)

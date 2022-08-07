@@ -8,6 +8,7 @@ import {
   writeFileSync,
 } from 'fs'
 import * as rimraf from 'rimraf'
+import { FileName, filesStructure } from './files-structure'
 
 function getAllFiles(templateFolder: string, arrayOfFiles?) {
   const PATH_TEMPLATE = resolve('src', 'templates', templateFolder)
@@ -59,21 +60,32 @@ export async function createFiles(templateToolbox, filesInfo) {
     const fileTempJson = parseJson(resolve('temp', file.target))
 
     const isFileUserExists = await fileExists(file.target)
+    const fileTempString = await parseString(fileTempJson)
 
     if (isFileUserExists) {
       const fileUserJson = parseJson(file.target)
       const fileName = basename(file.target).replace(/\.[^/.]+$/, '')
+      const fileExtension = basename(file.target).split('.').pop()
 
-      if (fileName === FileName.API_CONFIG) {
-        const fileMergedString = mergeFiles(
-          fileTempJson,
-          fileUserJson,
-          fileName
-        )
-        await save(resolve(file.target), fileMergedString)
-      }
+      Object.values(FileName).map(async (name) => {
+        if (fileName === name) {
+          const fileMergedString = mergeFiles(
+            fileTempJson,
+            fileUserJson,
+            fileName
+          )
+
+          await save(resolve(file.target), fileMergedString)
+        } else {
+          const newNameFile = `${file.target.replace(
+            /[^\/]*$/,
+            ''
+          )}${fileName}.${fileExtension} - [IN CONFLICT]`
+
+          await save(resolve(newNameFile), fileTempString)
+        }
+      })
     } else {
-      const fileTempString = await parseString(fileTempJson)
       await save(resolve(file.target), fileTempString)
     }
   })
@@ -125,105 +137,87 @@ export function jsonFilesInfo(module: string, appName: string, props?) {
   return coreFiles
 }
 
-enum FileName {
-  API_CONFIG = 'api-config',
-  PACKAGE = 'package',
-  SERVICE = 'service',
-  ENV_EXAMPLE = 'env-example',
-  DOCKER_FILE = 'docker-file',
-  DOCKER_COMPOSE = 'docker-compose',
-  ROUTES = 'routes',
-}
-
 function mergeFiles(fileTempJson, fileUserJson, fileName: string) {
   const { sectionsUser, sectionsTemp } = getAllRanges(
     fileTempJson,
     fileUserJson,
     fileName
   )
-  sectionsTemp
-  sectionsUser
+
+  const sectionsNames = Object.keys(sectionsUser).map((section) => section)
 
   let fileUserArray = []
+  let fileMergedArray = []
 
   fileUserJson.map((line) => {
     fileUserArray.push(line.content)
   })
 
-  fileUserArray.splice(
-    sectionsUser['imports'].lineSectionEnd,
-    0,
-    ...sectionsTemp['imports'].contentSection
-  )
-
-  const fileMergedArray = createConflicts(
-    fileUserArray,
-    sectionsUser,
-    sectionsTemp
-  )
+  sectionsNames.map((section) => {
+    fileUserArray.splice(
+      sectionsUser[section].lineSectionEnd,
+      0,
+      ...sectionsTemp[section].contentSection
+    )
+    fileMergedArray = createConflicts(
+      fileUserArray,
+      sectionsUser,
+      sectionsTemp,
+      section
+    )
+  })
 
   const fileMergedString = fileMergedArray.join('\n')
 
   return fileMergedString
 }
 
-function createConflicts(fileUserArray, sectionsUser, sectionsTemp) {
-  fileUserArray.splice(
-    sectionsUser['imports'].lineSectionStart,
+function createConflicts(fileUserArray, sectionsUser, sectionsTemp, section) {
+  let newFileUserArray = fileUserArray
+
+  newFileUserArray.splice(
+    sectionsUser[section].lineSectionStart,
     0,
-    '<<<<<<< HEAD'
+    `<<<<<<< HEAD ${section}`
   )
 
-  fileUserArray.splice(sectionsUser['imports'].lineSectionEnd + 1, 0, '=======')
-  fileUserArray.splice(
-    sectionsUser['imports'].lineSectionEnd +
-      sectionsTemp['imports'].contentSection.length +
+  newFileUserArray.splice(
+    sectionsUser[section].lineSectionEnd + 1,
+    0,
+    '======='
+  )
+  newFileUserArray.splice(
+    sectionsUser[section].lineSectionEnd +
+      sectionsTemp[section].contentSection.length +
       1,
     0,
-    '>>>>>>> TEMP'
+    `>>>>>>> TEMP ${section}`
   )
 
-  return fileUserArray
+  return newFileUserArray
 }
 
 function getAllRanges(fileTempJson, fileUserJson, fileName) {
-  const sectionsApiFile = [
-    {
-      name: 'constructor',
-      range: {
-        contentSectionStart: 'constructor() {',
-        contentSectionEnd: '// DatabaseDB.start();',
-      },
-    },
-    {
-      name: 'imports',
-      range: {
-        contentSectionStart: 'import',
-        contentSectionEnd: 'class ApiConfig {',
-      },
-    },
-  ]
+  const files = filesStructure(fileName)
 
-  if (fileName === FileName.API_CONFIG) {
-    let sectionsUser = {}
-    let sectionsTemp = {}
+  let sectionsUser = {}
+  let sectionsTemp = {}
 
-    sectionsApiFile.map((section) => {
-      const sectionName = section.name
-      const sectionRange = section.range
+  files.map((section) => {
+    const sectionName = section.name
+    const sectionRange = section.range
 
-      Object.assign(
-        sectionsUser,
-        getRange(fileUserJson, sectionName, sectionRange)
-      )
-      Object.assign(
-        sectionsTemp,
-        getRange(fileTempJson, sectionName, sectionRange)
-      )
-    })
+    Object.assign(
+      sectionsUser,
+      getRange(fileUserJson, sectionName, sectionRange)
+    )
+    Object.assign(
+      sectionsTemp,
+      getRange(fileTempJson, sectionName, sectionRange)
+    )
+  })
 
-    return { sectionsUser, sectionsTemp }
-  }
+  return { sectionsUser, sectionsTemp }
 }
 
 function getRange(

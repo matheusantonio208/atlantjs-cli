@@ -1,5 +1,17 @@
 import * as ora from 'ora'
 import { system } from 'gluegun'
+import { createFiles } from '../extends/file-manager'
+
+export async function createFilesModule(template, files, moduleName) {
+  let spinner = ora(`Creating ${moduleName} Files`).start()
+  try {
+    await createFiles(template, files)
+    spinner.stop()
+    ora(`Files ${moduleName} Created`).succeed()
+  } catch (error) {
+    spinner.fail(` Fail to create files of ${moduleName} ${error.toString()}`)
+  }
+}
 
 export async function installPackages(name) {
   const spinner = ora('Install packages').start()
