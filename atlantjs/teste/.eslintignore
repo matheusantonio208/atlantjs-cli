@@ -1,9 +1,0 @@
-node_modules
-dist
-public
-jsconfig.json
-docker*
-android
-ios
-.dev
-__tests__
