@@ -1,14 +1,14 @@
 import {
   jsonFilesInfo,
   createFiles,
-  removeTempFiles,
+  // removeTempFiles,
 } from '../extends/file-manager'
-import {
-  installPackages,
-  startGit,
-  openProject,
-  startRepository,
-} from '../extends/before-generate-manager'
+// import {
+//   installPackages,
+//   startGit,
+//   openProject,
+//   startRepository,
+// } from '../extends/before-generate-manager'
 
 module.exports = {
   name: 'create:backend',
@@ -22,7 +22,7 @@ module.exports = {
 
     const name: string = parameters.first || '.'
 
-    const { repoUrl } = toolbox.parameters.options
+    // const { repoUrl } = toolbox.parameters.options
 
     const backendFiles = jsonFilesInfo(FOLDER_API_TEMPLATE, name)
     const coreFiles = jsonFilesInfo(FOLDER_CORE_TEMPLATE, name)
@@ -30,18 +30,18 @@ module.exports = {
     await createFiles(template, backendFiles)
     await createFiles(template, coreFiles)
 
-    setTimeout(async () => {
-      const packageInstalled = await installPackages(name)
-      await removeTempFiles()
-      if (packageInstalled) {
-        await startGit(name)
-        await openProject(name)
-      }
+    // setTimeout(async () => {
+    //   const packageInstalled = await installPackages(name)
+    //   await removeTempFiles()
+    //   if (packageInstalled) {
+    //     await startGit(name)
+    //     await openProject(name)
+    //   }
 
-      if (repoUrl) {
-        await startRepository(name, repoUrl)
-      }
-    }, 1000)
+    //   if (repoUrl) {
+    //     await startRepository(name, repoUrl)
+    //   }
+    // }, 1000)
 
     //corrigir caminhos
   },

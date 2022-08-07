@@ -28,7 +28,9 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "file-mergery": "^0.0.1",
     "gluegun": "latest",
+    "merge-files": "^0.1.2",
     "ora": "5.4.1",
     "rimraf": "^3.0.2",
     "ts-node": "10.8.1"

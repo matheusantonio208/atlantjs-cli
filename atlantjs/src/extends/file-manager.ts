@@ -9,17 +9,19 @@ import {
 } from 'fs'
 import * as rimraf from 'rimraf'
 
-function getAllFiles(templateFolder, arrayOfFiles?) {
-  const dirPath = resolve('src', 'templates', templateFolder)
-  let files = readdirSync(dirPath)
+function getAllFiles(templateFolder: string, arrayOfFiles?) {
+  const PATH_TEMPLATE = resolve('src', 'templates', templateFolder)
+
+  let files = readdirSync(PATH_TEMPLATE)
 
   arrayOfFiles = arrayOfFiles || []
 
   files.forEach(function (file) {
-    if (statSync(dirPath + '/' + file).isDirectory()) {
-      arrayOfFiles = getAllFiles(dirPath + '/' + file, arrayOfFiles)
+    const PATH_FILE = `${PATH_TEMPLATE}/${file}`
+    if (statSync(PATH_FILE).isDirectory()) {
+      arrayOfFiles = getAllFiles(PATH_FILE, arrayOfFiles)
     } else {
-      arrayOfFiles.push(join(__dirname, dirPath, '/', file))
+      arrayOfFiles.push(join(__dirname, PATH_TEMPLATE, '/', file))
     }
   })
 
@@ -33,15 +35,15 @@ function getAllFiles(templateFolder, arrayOfFiles?) {
   return templates
 }
 
-async function createTempFiles(template, file) {
-  await template.generate({
-    template: file.template,
-    target: resolve('temp', file.target),
-    props: file.props,
+async function createTempFiles(templateToolbox, fileInfo) {
+  await templateToolbox.generate({
+    template: fileInfo.template,
+    target: resolve('temp', fileInfo.target),
+    props: fileInfo.props,
   })
 }
 
-async function save(filePath, fileString) {
+async function save(filePath: string, fileString: string) {
   mkdirSync(dirname(filePath), { recursive: true })
   writeFileSync(filePath, fileString)
 }
@@ -51,15 +53,23 @@ export async function removeTempFiles() {
   rimraf.sync(tempFilesPath)
 }
 
-export async function createFiles(template, files) {
-  files.map(async (file) => {
-    await createTempFiles(template, file)
+export async function createFiles(templateToolbox, filesInfo) {
+  filesInfo.map(async (file) => {
+    await createTempFiles(templateToolbox, file)
     const fileTempJson = parseJson(resolve('temp', file.target))
 
-    const isFileUserExists = await fileExists(file)
+    const isFileUserExists = await fileExists(file.target)
 
     if (isFileUserExists) {
-      // console.log('==MERGE FILES (packages.json)==')
+      const fileUserJson = parseJson(file.target)
+
+      const fileName = 'api-config'
+
+      const fileMergedJson = mergeFiles(fileTempJson, fileUserJson, fileName)
+      fileMergedJson
+      // const fileMergedString = await parseString(fileMergedJson)
+
+      // await save(resolve(file.target), fileMergedString)
     }
 
     const fileTempString = await parseString(fileTempJson)
@@ -68,7 +78,7 @@ export async function createFiles(template, files) {
   })
 }
 
-function parseJson(filePath) {
+function parseJson(filePath: string) {
   const content = readFileSync(filePath).toString()
 
   const contentArray = content.split('\n')
@@ -92,8 +102,8 @@ async function parseString(fileJson) {
   return fileToString
 }
 
-async function fileExists(file) {
-  return jetpack.existsAsync(file.target)
+async function fileExists(filePath: string) {
+  return jetpack.existsAsync(filePath)
 }
 
 export function jsonFilesInfo(module: string, appName: string, props?) {
@@ -112,4 +122,43 @@ export function jsonFilesInfo(module: string, appName: string, props?) {
   })
 
   return coreFiles
+}
+
+enum FileName {
+  API_CONFIG = 'api-config',
+  PACKAGE = 'package',
+  SERVICE = 'service',
+  ENV_EXAMPLE = 'env-example',
+  DOCKER_FILE = 'docker-file',
+  DOCKER_COMPOSE = 'docker-compose',
+  ROUTES = 'routes',
+}
+
+function mergeFiles(fileTempJson, fileUserJson, fileName: string) {
+  const sectionUser = getRanges(fileUserJson, fileName)
+
+  console.log(sectionUser)
+}
+
+function getRanges(fileJson, fileName: string) {
+  let sectionStart
+  let sectionEnd
+
+  if ((fileName = FileName.API_CONFIG)) {
+    sectionStart = '// <imports>'
+    sectionEnd = '// </imports>'
+  }
+
+  let sectionRange = { start: '', end: '' }
+
+  fileJson.map((lineJson) => {
+    const { line, content } = lineJson
+
+    if (content === sectionStart) {
+      sectionRange.start = line
+    }
+    if (content === sectionEnd) {
+      sectionRange.end = line
+    }
+  })
 }
