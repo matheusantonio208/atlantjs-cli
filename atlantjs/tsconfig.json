@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+
     "allowSyntheticDefaultImports": false,
     "experimentalDecorators": true,
     "lib": [
@@ -14,7 +17,6 @@
     "moduleResolution": "node",
     "noImplicitAny": false,
     "noImplicitThis": true,
-    "noUnusedLocals": true,
     "sourceMap": false,
     "inlineSourceMap": true,
     "outDir": "build",

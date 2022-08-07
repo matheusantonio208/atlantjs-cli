@@ -27,7 +27,7 @@ function getAllFiles(templateFolder: string, arrayOfFiles?) {
 
   let templates = []
 
-  arrayOfFiles.map((directory, index) => {
+  arrayOfFiles.map((directory) => {
     directory = directory.toString()
     templates.push(directory.substring(directory.indexOf(templateFolder)))
   })
@@ -62,20 +62,20 @@ export async function createFiles(templateToolbox, filesInfo) {
 
     if (isFileUserExists) {
       const fileUserJson = parseJson(file.target)
-
       const fileName = basename(file.target).replace(/\.[^/.]+$/, '')
 
       if (fileName === FileName.API_CONFIG) {
-        const fileMergedJson = mergeFiles(fileTempJson, fileUserJson, fileName)
-        fileMergedJson // const fileMergedString = await parseString(fileMergedJson)
-
-        // await save(resolve(file.target), fileMergedString)
+        const fileMergedString = mergeFiles(
+          fileTempJson,
+          fileUserJson,
+          fileName
+        )
+        await save(resolve(file.target), fileMergedString)
       }
+    } else {
+      const fileTempString = await parseString(fileTempJson)
+      await save(resolve(file.target), fileTempString)
     }
-
-    const fileTempString = await parseString(fileTempJson)
-
-    await save(resolve(file.target), fileTempString)
   })
 }
 
@@ -94,7 +94,7 @@ function parseJson(filePath: string) {
 async function parseString(fileJson) {
   let content = []
 
-  fileJson.map((file, index) => {
+  fileJson.map((file) => {
     content.push(JSON.parse(JSON.stringify(file.content)).replace('\r', ''))
   })
 
@@ -156,6 +156,18 @@ function mergeFiles(fileTempJson, fileUserJson, fileName: string) {
     ...sectionsTemp['imports'].contentSection
   )
 
+  const fileMergedArray = createConflicts(
+    fileUserArray,
+    sectionsUser,
+    sectionsTemp
+  )
+
+  const fileMergedString = fileMergedArray.join('\n')
+
+  return fileMergedString
+}
+
+function createConflicts(fileUserArray, sectionsUser, sectionsTemp) {
   fileUserArray.splice(
     sectionsUser['imports'].lineSectionStart,
     0,
@@ -170,7 +182,8 @@ function mergeFiles(fileTempJson, fileUserJson, fileName: string) {
     0,
     '>>>>>>> TEMP'
   )
-  console.log(fileUserArray)
+
+  return fileUserArray
 }
 
 function getAllRanges(fileTempJson, fileUserJson, fileName) {
