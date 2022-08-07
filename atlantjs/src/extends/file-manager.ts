@@ -54,8 +54,8 @@ export async function removeTempFiles() {
   rimraf.sync(tempFilesPath)
 }
 
-export async function createFiles(templateToolbox, filesInfo) {
-  filesInfo.map(async (file) => {
+export async function createFiles(templateToolbox, filesInfoArray) {
+  filesInfoArray.map(async (file) => {
     await createTempFiles(templateToolbox, file)
     const fileTempJson = parseJson(resolve('temp', file.target))
 
@@ -119,7 +119,11 @@ async function fileExists(filePath: string) {
   return jetpack.existsAsync(filePath)
 }
 
-export function jsonFilesInfo(module: string, appName: string, props?) {
+export function getListFilesInfo(
+  module: string,
+  appName: string,
+  props?
+): Array<unknown> {
   const files = getAllFiles(module)
 
   let coreFiles = []

@@ -2,18 +2,25 @@ import * as ora from 'ora'
 import { system } from 'gluegun'
 import { createFiles } from '../extends/file-manager'
 
-export async function createFilesModule(template, files, moduleName) {
-  let spinner = ora(`Creating ${moduleName} Files`).start()
+export async function createFilesLayerCommand(
+  template,
+  files,
+  moduleNameToLog: string
+) {
+  let spinner = ora(`Creating ${moduleNameToLog} Files`).start()
   try {
     await createFiles(template, files)
+
     spinner.stop()
-    ora(`Files ${moduleName} Created`).succeed()
+    ora(`Files ${moduleNameToLog} Created`).succeed()
   } catch (error) {
-    spinner.fail(` Fail to create files of ${moduleName} ${error.toString()}`)
+    spinner.fail(
+      ` Fail to create files of ${moduleNameToLog} ${error.toString()}`
+    )
   }
 }
 
-export async function installPackages(name) {
+export async function installPackagesCommand(name) {
   const spinner = ora('Install packages').start()
   try {
     await system.run(`cd ${name} && yarn`)
@@ -27,7 +34,7 @@ export async function installPackages(name) {
   }
 }
 
-export async function startGit(name) {
+export async function startGitCommand(name) {
   const spinner = ora('Initialized Git').start()
   try {
     await system.run(
@@ -40,7 +47,7 @@ export async function startGit(name) {
   }
 }
 
-export async function startRepository(name, repoUrl) {
+export async function startRepositoryCommand(name, repoUrl) {
   const spinner = ora('Initializing Repository').start()
   try {
     await system.run(`
@@ -55,7 +62,7 @@ export async function startRepository(name, repoUrl) {
   }
 }
 
-export async function openProject(name) {
+export async function openProjectCommand(name) {
   await system.run(`
     cd ${name} &&
     code .

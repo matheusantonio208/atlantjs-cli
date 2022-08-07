@@ -1,11 +1,11 @@
-import { jsonFilesInfo, removeTempFiles } from '../extends/file-manager'
+import { getListFilesInfo, removeTempFiles } from '../extends/file-manager'
 import {
-  installPackages,
-  startGit,
-  openProject,
-  startRepository,
-  createFilesModule,
-} from '../extends/before-generate-manager'
+  installPackagesCommand,
+  startGitCommand,
+  openProjectCommand,
+  startRepositoryCommand,
+  createFilesLayerCommand,
+} from '../extends/commands'
 
 module.exports = {
   name: 'create:backend',
@@ -21,25 +21,29 @@ module.exports = {
 
     const { repoUrl } = toolbox.parameters.options
 
-    const backendFiles = jsonFilesInfo(FOLDER_API_TEMPLATE, name)
-    const coreFiles = jsonFilesInfo(FOLDER_CORE_TEMPLATE, name)
+    const backendFilesList: Array<unknown> = getListFilesInfo(
+      FOLDER_API_TEMPLATE,
+      name
+    )
+    const coreFilesList: Array<unknown> = getListFilesInfo(
+      FOLDER_CORE_TEMPLATE,
+      name
+    )
 
-    await createFilesModule(template, backendFiles, 'backend')
-    await createFilesModule(template, coreFiles, 'core')
+    await createFilesLayerCommand(template, backendFilesList, 'backend')
+    await createFilesLayerCommand(template, coreFilesList, 'core')
 
     setTimeout(async () => {
-      const packageInstalled = await installPackages(name)
       await removeTempFiles()
-      if (packageInstalled) {
-        await startGit(name)
-        await openProject(name)
+
+      if (await installPackagesCommand(name)) {
+        await startGitCommand(name)
+        await openProjectCommand(name)
       }
 
       if (repoUrl) {
-        await startRepository(name, repoUrl)
+        await startRepositoryCommand(name, repoUrl)
       }
     }, 1000)
-
-    //corrigir caminhos
   },
 }
