@@ -30,8 +30,8 @@ module.exports = {
       name
     )
 
-    await createFilesLayerCommand(template, backendFilesList, 'backend')
-    await createFilesLayerCommand(template, coreFilesList, 'core')
+    await createFilesLayerCommand(template, backendFilesList, `backend ${name}`)
+    // await createFilesLayerCommand(template, coreFilesList, `core ${name}`)
 
     setTimeout(async () => {
       await removeTempFiles()
