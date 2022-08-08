@@ -1,6 +1,7 @@
 import * as ora from 'ora'
 import { system } from 'gluegun'
 import { terminal } from 'terminal-kit'
+import * as chalk from 'chalk'
 import { createFiles } from '../extends/file-manager'
 import { get as getEmoji } from 'node-emoji'
 
@@ -9,15 +10,21 @@ export async function createFilesLayerCommand(
   infoFilesList: Array<unknown>,
   moduleNameToLog: string
 ) {
-  let spinner = ora(`Creating ${moduleNameToLog} files...`).start()
+  let spinner = ora(
+    `Creating ${chalk.bold.italic.gray(moduleNameToLog)} files...`
+  ).start()
   try {
     await createFiles(template, infoFilesList)
 
     spinner.stop()
-    ora(`Files ${moduleNameToLog} created successfully!`).succeed()
+    ora(
+      `Files ${chalk.bold.italic.gray(moduleNameToLog)} created successfully!`
+    ).succeed()
   } catch (error) {
     spinner.fail(
-      ` Fail to create files of ${moduleNameToLog} ${error.toString()}`
+      ` Fail to create files of ${chalk.bold.italic.gray(
+        moduleNameToLog
+      )} ${error.toString()}`
     )
   }
 }
@@ -73,7 +80,9 @@ export async function openProjectCommand(name) {
       code .
     `)
     spinner.stop()
-    ora(`Success when opening the project ${name}!`).succeed()
+    ora(
+      `Success when opening the project ${chalk.bold.italic.gray(name)}!`
+    ).succeed()
 
     terminal.bold(`\n===================================`)
     terminal.bold(`\n||                               ||`)
@@ -98,7 +107,7 @@ export async function openProjectCommand(name) {
     terminal('\n    ^bhttp://trello.com.br/^')
 
     terminal(`\n\n❯ Access your Figma in:`)
-    terminal('\n    ^bhttp://figma.com.br/^')
+    terminal('\n    ^bhttp://figma.com.br/^\n\n')
 
     terminal.bold
       .italic('\n\nRun atlantjs')
@@ -106,5 +115,10 @@ export async function openProjectCommand(name) {
       .bold.italic('to access doc cli of')
       .bold.italic.red(' Atlantjs ')
       .bold.italic('and know more commands to make your life easier\n\n')
+
+    terminal.bold
+      .italic(`        Developed with`)
+      .bold(` ${getEmoji('heart')} `)
+      .bold.italic(` for Matheus Antonio\n\n`)
   } catch (err) {}
 }
