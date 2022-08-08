@@ -92,28 +92,43 @@ export async function openProjectCommand(name) {
       )}^    ||`
     )
     terminal.bold(`\n||                               ||`)
-    terminal.bold(`\n===================================`)
+    terminal.bold(`\n===================================\n\n`)
 
-    terminal(`\n\n❯ To Open Documentation Swagger:`)
-    terminal('\n    ^gyarn docs^ access in ^bhttp://localhost:8080/docs^')
+    terminal(`To Open Documentation Swagger:`)
+    terminal(`\n❯    ^gyarn docs^ access in ^bhttp://localhost:8080/docs^\n\n`)
 
-    terminal(`\n\n❯ Start development with:`)
-    terminal('\n    ^gyarn dev^ access in ^bhttp://localhost:8080/^')
+    terminal(`To Open Documentation Storybook:`)
+    terminal(`\n❯    ^gyarn docs^ access in ^bhttp://localhost:8080/docs^\n\n`)
 
-    terminal(`\n\n❯ Start debug with:`)
-    terminal('\n    ^gyarn dev:debug^')
+    terminal(`Start development with:`)
+    terminal(`\n❯    ^gyarn dev^ access in ^bhttp://localhost:8080/^\n\n`)
 
-    terminal(`\n\n❯ Trello board access in:`)
-    terminal('\n    ^bhttp://trello.com.br/^')
+    terminal(`Start debug with:`)
+    terminal(`\n❯    ^gyarn dev:debug^\n\n`)
 
-    terminal(`\n\n❯ Access your Figma in:`)
-    terminal('\n    ^bhttp://figma.com.br/^\n\n')
+    terminal(`Trello board access in:`)
+    terminal(`\n❯    ^bhttp://trello.com/^\n\n`)
+
+    terminal(`Access your Figma in:`)
+    terminal(`\n❯    ^bhttp://figma.com/^\n\n`)
+
+    terminal(`Access Git Manual in:`)
+    terminal(`\n❯    ^bhttp://notion.so/^\n\n`)
+
+    terminal(`Access Wiki ${chalk.bold.italic.gray(name)} in:`)
+    terminal(`\n❯    ^bhttp://notion.so/^\n\n`)
+
+    terminal(`Access Repository in:`)
+    terminal(`\n❯    ^bhttp://github.com/^\n\n`)
+
+    terminal(`Access Expo in:`)
+    terminal(`\n❯    ^bhttp://expo.com/^\n\n`)
 
     terminal.bold
       .italic('\n\nRun atlantjs')
       .bold.italic.green(' --help ')
       .bold.italic('to access doc cli of')
-      .bold.italic.red(' Atlantjs ')
+      .bold.italic.red(' AtlantJS.dev ')
       .bold.italic('and know more commands to make your life easier\n\n')
 
     terminal.bold
