@@ -78,7 +78,9 @@ export async function openProjectCommand(name) {
     terminal.bold(`\n===================================`)
     terminal.bold(`\n||                               ||`)
     terminal.bold(
-      `\n|| ${getEmoji('rocket')} ^yLet's to coder!^ ${getEmoji('rocket')} `
+      `\n||   ^y${getEmoji('rocket')} Let's go to coder! ${getEmoji(
+        'rocket'
+      )}^    ||`
     )
     terminal.bold(`\n||                               ||`)
     terminal.bold(`\n===================================`)
@@ -96,7 +98,7 @@ export async function openProjectCommand(name) {
     terminal('\n    ^bhttp://trello.com.br/^')
 
     terminal(`\n\n❯ Access your Figma in:`)
-    terminal.bold().italic().blue('\n    ^bhttp://figma.com.br/^')
+    terminal('\n    ^bhttp://figma.com.br/^')
 
     terminal.bold
       .italic('\n\nRun atlantjs')
