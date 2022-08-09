@@ -56,6 +56,17 @@ export async function startGitCommand(name) {
   }
 }
 
+export async function createCommitCommand(message) {
+  const spinner = ora('Creating Commit...').start()
+  try {
+    await system.run(`git add . && git commit -m "${message}" && git push`)
+    spinner.stop()
+    ora('Commit created successfully!').succeed()
+  } catch (error) {
+    spinner.fail('Failure when performing Commit')
+  }
+}
+
 export async function startRepositoryCommand(name, repoUrl) {
   const spinner = ora('Initializing Repository...').start()
   try {
@@ -83,57 +94,116 @@ export async function openProjectCommand(name) {
     ora(
       `Success when opening the project ${chalk.bold.italic.gray(name)}!`
     ).succeed()
+  } catch (err) {}
+}
 
-    terminal.bold(`\n===================================`)
-    terminal.bold(`\n||                               ||`)
-    terminal.bold(
-      `\n||   ^y${getEmoji('rocket')} Let's go to coder! ${getEmoji(
-        'rocket'
-      )}^    ||`
-    )
-    terminal.bold(`\n||                               ||`)
-    terminal.bold(`\n===================================\n\n`)
+export function infoAfterCreate({
+  trelloUrl,
+  notionUrl,
+  herokuUrl,
+  gitRepoUrl,
+  figmaUrl,
+  adMob,
+  googleAnalytics,
+  expo,
+  dtoProperties,
+  moduleName,
+  backend,
+  frontend,
+  mobile,
+}) {
+  terminal.bold(`
+  \n===================================\n
+  ||                               ||
+  ||   ^y${getEmoji('rocket')} Let's go to coder! ${getEmoji('rocket')}^    ||
+  ||                               ||
+  \n===================================\n\n`)
 
+  if (backend) {
     terminal(`To Open Documentation Swagger:`)
     terminal(`\n❯    ^gyarn docs^ access in ^bhttp://localhost:8080/docs^\n\n`)
+  }
 
+  if (frontend) {
     terminal(`To Open Documentation Storybook:`)
     terminal(`\n❯    ^gyarn docs^ access in ^bhttp://localhost:8080/docs^\n\n`)
 
-    terminal(`Start development with:`)
-    terminal(`\n❯    ^gyarn dev^ access in ^bhttp://localhost:8080/^\n\n`)
+    if (figmaUrl) {
+      terminal(`Access your Figma in:`)
+      terminal(`\n❯    ^bhttp://figma.com/^\n\n`)
+    }
+  }
 
-    terminal(`Start debug with:`)
-    terminal(`\n❯    ^gyarn dev:debug^\n\n`)
+  terminal(`Start development with:`)
+  terminal(`\n❯    ^gyarn dev^ access in ^bhttp://localhost:8080/^\n\n`)
 
+  terminal(`Start debug with:`)
+  terminal(`\n❯    ^gyarn dev:debug^\n\n`)
+
+  terminal(`Access Git Manual in:`)
+  terminal(`\n❯    ^bhttp://notion.so/^\n\n`)
+
+  terminal(
+    `Install end booster your workstation (React Native || NodeJS || React JS || Electron) setup in:`
+  )
+  terminal(`\n❯    ^bhttp://notion.com/^\n\n`)
+
+  if (trelloUrl) {
     terminal(`Trello board access in:`)
-    terminal(`\n❯    ^bhttp://trello.com/^\n\n`)
+    terminal(`\n❯    ^b${trelloUrl}^\n\n`)
+  }
 
-    terminal(`Access your Figma in:`)
-    terminal(`\n❯    ^bhttp://figma.com/^\n\n`)
-
-    terminal(`Access Git Manual in:`)
-    terminal(`\n❯    ^bhttp://notion.so/^\n\n`)
-
+  if (notionUrl) {
     terminal(`Access Wiki ${chalk.bold.italic.gray(name)} in:`)
     terminal(`\n❯    ^bhttp://notion.so/^\n\n`)
+  }
 
+  if (gitRepoUrl) {
     terminal(`Access Repository in:`)
     terminal(`\n❯    ^bhttp://github.com/^\n\n`)
+  }
 
+  if (mobile && expo) {
     terminal(`Access Expo in:`)
     terminal(`\n❯    ^bhttp://expo.com/^\n\n`)
+  }
 
-    terminal.bold
-      .italic('\n\nRun atlantjs')
-      .bold.italic.green(' --help ')
-      .bold.italic('to access doc cli of')
-      .bold.italic.red(' AtlantJS.dev ')
-      .bold.italic('and know more commands to make your life easier\n\n')
+  if (adMob) {
+    terminal(`Access AdMob Dashboard in:`)
+    terminal(`\n❯    ^bhttp://expo.com/^\n\n`)
+  }
 
-    terminal.bold
-      .italic(`        Developed with`)
-      .bold(` ${getEmoji('heart')} `)
-      .bold.italic(` for Matheus Antonio\n\n`)
-  } catch (err) {}
+  if (googleAnalytics) {
+    terminal(`Access Analytics Dashboard in:`)
+    terminal(`\n❯    ^bhttp://expo.com/^\n\n`)
+  }
+
+  if (trelloUrl || notionUrl || herokuUrl || dtoProperties || moduleName) {
+    terminal.bold(
+      `${getEmoji('arrow_up')}  Your Links above ${getEmoji('arrow_up')}\n\n`
+    )
+  }
+}
+
+export function footerTerminalLog() {
+  terminal.bold
+    .yellow(`\n\n${getEmoji('warning')} `)
+    .bold.red(` Do not`)
+    .bold.yellow(` delete comments lines in this standard `)
+    .bold.italic.gray(`//! Section-Name.`)
+    .bold.yellow(
+      ` It is from them that we know the structure of your code to perform merge`
+    )
+
+  terminal.bold
+    .italic('\n\nRun atlantjs')
+    .bold.italic.green(' --help ')
+    .bold.italic('to access doc cli of')
+    .bold.italic.red(' AtlantJS.dev ')
+    .bold.italic('and know more commands to make your life easier')
+
+  terminal.bold
+    .italic(`\n\n              Developed with`)
+    .bold(` ${getEmoji('heart')} `)
+    .bold.italic(` for Matheus Antonio\n\n`)
 }

@@ -17,15 +17,15 @@ export function filesStructure(fileName: string) {
         {
           name: 'constructor',
           range: {
-            contentSectionStart: 'constructor() {',
-            contentSectionEnd: '// DatabaseDB.start();',
+            contentSectionStart: '//! constructor-start',
+            contentSectionEnd: '//! constructor-end',
           },
         },
         {
           name: 'imports',
           range: {
-            contentSectionStart: 'import',
-            contentSectionEnd: 'class ApiConfig {',
+            contentSectionStart: '//! import-start',
+            contentSectionEnd: '//! import-end',
           },
         }
       )
@@ -34,24 +34,17 @@ export function filesStructure(fileName: string) {
     case FileName.PACKAGE: {
       file.push(
         {
-          name: 'scripts',
-          range: {
-            contentSectionStart: '"scripts": {',
-            contentSectionEnd: '"coverage": "jest --coverage"',
-          },
-        },
-        {
           name: 'dependencies',
           range: {
-            contentSectionStart: '"dependencies": {',
-            contentSectionEnd: '"ts-node": "10.8.1"',
+            contentSectionStart: '//! dependencies-start',
+            contentSectionEnd: '//! dependencies-end',
           },
         },
         {
           name: 'devDependencies',
           range: {
-            contentSectionStart: '"devDependencies": {',
-            contentSectionEnd: '"typescript": "^4.2.3"',
+            contentSectionStart: '//! devDependencies-start',
+            contentSectionEnd: '//! devDependencies-end',
           },
         }
       )

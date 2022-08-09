@@ -9,9 +9,10 @@ import {
 } from 'fs'
 import * as rimraf from 'rimraf'
 import { FileName, filesStructure } from './files-structure'
+import { lowerFirstLetter, upperFirstLetter } from '../utils'
 
-function getAllFiles(templateFolder: string, arrayOfFiles?) {
-  const PATH_TEMPLATE = resolve(__dirname, '..', 'templates', templateFolder)
+function getPathsTemplate(templateName: string, arrayOfFiles?) {
+  const PATH_TEMPLATE = resolve(__dirname, '..', 'templates', templateName)
 
   let files = readdirSync(PATH_TEMPLATE)
 
@@ -19,8 +20,9 @@ function getAllFiles(templateFolder: string, arrayOfFiles?) {
 
   files.forEach(function (file) {
     const PATH_FILE = `${PATH_TEMPLATE}/${file}`
+
     if (statSync(PATH_FILE).isDirectory()) {
-      arrayOfFiles = getAllFiles(PATH_FILE, arrayOfFiles)
+      arrayOfFiles = getPathsTemplate(PATH_FILE, arrayOfFiles)
     } else {
       arrayOfFiles.push(join(__dirname, PATH_TEMPLATE, '/', file))
     }
@@ -29,8 +31,9 @@ function getAllFiles(templateFolder: string, arrayOfFiles?) {
   let templates = []
 
   arrayOfFiles.map((directory) => {
-    directory = directory.toString()
-    templates.push(directory.substring(directory.indexOf(templateFolder)))
+    templates.push(
+      directory.toString().substring(directory.indexOf(templateName))
+    )
   })
 
   return templates
@@ -44,28 +47,32 @@ async function createTempFiles(templateToolbox, fileInfo) {
   })
 }
 
+export async function clearTempFiles() {
+  const tempFilesPath = resolve('temp')
+  rimraf.sync(tempFilesPath)
+}
+
 async function save(filePath: string, fileString: string) {
   mkdirSync(dirname(filePath), { recursive: true })
   writeFileSync(filePath, fileString)
 }
 
-export async function removeTempFiles() {
-  const tempFilesPath = resolve('temp')
-  rimraf.sync(tempFilesPath)
-}
-
 export async function createFiles(templateToolbox, filesInfoArray) {
   filesInfoArray.map(async (file) => {
     await createTempFiles(templateToolbox, file)
+
     const fileTempJson = parseJson(resolve('temp', file.target))
+    const fileTempString = await parseString(fileTempJson)
 
     const isFileUserExists = await fileExists(file.target)
-    const fileTempString = await parseString(fileTempJson)
 
     if (isFileUserExists) {
       const fileUserJson = parseJson(file.target)
+
       const fileName = basename(file.target).replace(/\.[^/.]+$/, '')
       const fileExtension = basename(file.target).split('.').pop()
+
+      let hasPatternFile: boolean
 
       Object.values(FileName).map(async (name) => {
         if (fileName === name) {
@@ -74,17 +81,21 @@ export async function createFiles(templateToolbox, filesInfoArray) {
             fileUserJson,
             fileName
           )
-
+          hasPatternFile = true
           await save(resolve(file.target), fileMergedString)
         } else {
-          const newNameFile = `${file.target.replace(
-            /[^\/]*$/,
-            ''
-          )}${fileName}.${fileExtension} - [IN CONFLICT]`
-
-          await save(resolve(newNameFile), fileTempString)
+          hasPatternFile = false
         }
       })
+
+      if (hasPatternFile) {
+        const newNameFile = `${file.target.replace(
+          /[^\/]*$/,
+          ''
+        )}${fileName}.${fileExtension} - [IN CONFLICT]`
+
+        await save(resolve(newNameFile), fileTempString)
+      }
     } else {
       await save(resolve(file.target), fileTempString)
     }
@@ -121,24 +132,54 @@ async function fileExists(filePath: string) {
 
 export function getListFilesInfo(
   module: string,
-  appName: string,
+  appName?: string,
   props?
 ): Array<unknown> {
-  const files = getAllFiles(module)
+  const files = getPathsTemplate(module)
 
-  let coreFiles = []
+  let listFiles = []
 
   files.map((templateDir: string) => {
     const targetEjs = `${appName}/${templateDir.slice(module.length + 1)}`
     const target = targetEjs.split('.ejs').join('')
-    coreFiles.push({
+    listFiles.push({
       template: templateDir,
       target,
       props: props || null,
     })
   })
 
-  return coreFiles
+  return listFiles
+}
+
+export function getListModuleInfo(
+  name: string,
+  props,
+  entityJsonPaths?: string
+) {
+  console.log('🚀 ~ file: file-manager.ts ~ line 159 ~ name', name)
+  const PATH_MODULE_FILES = 'back-end/modules'
+
+  const files = getPathsTemplate(PATH_MODULE_FILES)
+
+  let moduleFiles = []
+
+  files.map((templateDir: string) => {
+    const targetWithEjs = `./${templateDir.slice(PATH_MODULE_FILES.length + 1)}`
+    const target = targetWithEjs
+      .split('.ejs')
+      .join('')
+      .replace('Xxxx', upperFirstLetter(name))
+      .replace('xxxx', lowerFirstLetter(name))
+
+    moduleFiles.push({
+      template: templateDir,
+      target,
+      props: props || null,
+    })
+  })
+
+  return moduleFiles
 }
 
 function mergeFiles(fileTempJson, fileUserJson, fileName: string) {
@@ -159,7 +200,7 @@ function mergeFiles(fileTempJson, fileUserJson, fileName: string) {
 
   sectionsNames.map((section) => {
     fileUserArray.splice(
-      sectionsUser[section].lineSectionEnd,
+      sectionsUser[section].lineSectionStart,
       0,
       ...sectionsTemp[section].contentSection
     )
@@ -185,15 +226,18 @@ function createConflicts(fileUserArray, sectionsUser, sectionsTemp, section) {
     `<<<<<<< HEAD ${section}`
   )
 
+  const lineSectionUserStart = sectionsUser[section].lineSectionStart
+  const lineSectionUserEnd = sectionsUser[section].lineSectionEnd
+  const totalLineTempSection = sectionsTemp[section].contentSection.length
+
+  const endUserSection =
+    lineSectionUserEnd >= totalLineTempSection
+      ? lineSectionUserEnd - totalLineTempSection
+      : lineSectionUserStart + totalLineTempSection + 1
+
+  newFileUserArray.splice(endUserSection, 0, '=======')
   newFileUserArray.splice(
-    sectionsUser[section].lineSectionEnd + 1,
-    0,
-    '======='
-  )
-  newFileUserArray.splice(
-    sectionsUser[section].lineSectionEnd +
-      sectionsTemp[section].contentSection.length +
-      1,
+    lineSectionUserEnd + totalLineTempSection + 3,
     0,
     `>>>>>>> TEMP ${section}`
   )
@@ -250,7 +294,7 @@ function getRange(
   fileJson.filter((lineJson) => {
     const { line, content } = lineJson
 
-    if (line >= lineSectionStart && line < lineSectionEnd) {
+    if (line >= lineSectionStart && line <= lineSectionEnd) {
       contentSection.push(content)
     }
   })
