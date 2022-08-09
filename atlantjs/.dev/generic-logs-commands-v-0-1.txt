@@ -1,0 +1,129 @@
+import { terminal } from 'terminal-kit'
+import { get as getEmoji } from 'node-emoji'
+import chalk = require('chalk')
+import { system } from 'gluegun'
+
+export async function showErrorLog(message: string) {
+  terminal.red.bold(`\n${getEmoji('warning')} ${message}`)
+}
+enum Environments {
+  BACKEND,
+  FRONTEND,
+  MOBILE,
+}
+enum ResponsesIntegrations {
+  TRELLO,
+  NOTION,
+  HEROKU,
+  GIT_REPO,
+  FIGMA,
+  AD_MOB,
+  GOOGLE_ANALYTICS,
+  EXPO,
+}
+interface Response {
+  infoText: string
+}
+export function infoAfterCreate(
+  responses: Array<Response>,
+  environments: Environments
+) {
+  const titleInBox = `     Let's go to coder!`
+
+  terminal.table([[titleInBox]], {
+    hasBorder: true,
+    borderAttr: { color: 'blue' },
+    width: 30,
+  })
+
+  switch (environments) {
+    case Environments.BACKEND:
+      terminal(
+        `Open documentation end-points with:\n❯    ^gyarn docs^ access in ^bhttp://localhost:8080/docs^\n\n`
+      )
+      break
+    case Environments.FRONTEND:
+      terminal(
+        `Open documentation components with:\n❯    ^gyarn docs^ access in ^bhttp://localhost:8080/docs^\n\n`
+      )
+      break
+    default:
+  }
+
+  responses.map((response) => {
+    terminal(response.infoText)
+  })
+
+  if (environments === Environments.FRONTEND) {
+    if (figmaResponse) {
+      terminal(`Access design system in:\n❯    ^bhttp://figma.com/^\n\n`)
+    }
+  }
+
+  terminal(
+    `Start development with:\n❯    ^gyarn dev^ access in ^bhttp://localhost:8080/^\n\n`
+  )
+
+  terminal(`Start debug with:\n❯    ^gyarn dev:debug^\n\n`)
+
+  if (trelloResponse) {
+    terminal(`Trello board access in:\n❯    ^b${trelloResponse}^\n\n`)
+  }
+
+  if (notionResponse) {
+    terminal(
+      `Access Wiki ${chalk.bold.italic.gray(
+        notionResponse
+      )} in:\n❯    ^bhttp://notion.so/^\n\n`
+    )
+  }
+
+  if (gitRepoResponse) {
+    terminal(`Access Repository in:\n❯    ^bhttp://github.com/^\n\n`)
+  }
+
+  if (mobile && expoResponse) {
+    terminal(`Access Expo in:\n❯    ^bhttp://expo.com/^\n\n`)
+  }
+
+  if (adMobResponse) {
+    terminal(`Access AdMob Dashboard in:\n❯    ^bhttp://expo.com/^\n\n`)
+  }
+
+  if (googleAnalyticsResponse) {
+    terminal(`Access Analytics Dashboard in:\n❯    ^bhttp://expo.com/^\n\n`)
+  }
+
+  if (trelloResponse || notionResponse || herokuResponse) {
+    terminal.bold(
+      `${getEmoji('arrow_up')}  Your Links above ${getEmoji('arrow_up')}\n\n`
+    )
+  }
+}
+
+export function footerTerminalLog() {
+  terminal.bold
+    .yellow(`\n${getEmoji('warning')}`)
+    .bold.red(` Do not`)
+    .bold.yellow(` delete comments lines in this standard `)
+    .bold.italic.gray(`//! Section-Name.`)
+    .bold.yellow(
+      ` It is from them that we know the structure of your code to perform merge`
+    )
+
+  terminal.bold
+    .italic('\n\nRun atlantjs')
+    .bold.italic.green(' --help ')
+    .bold.italic('to access doc cli of')
+    .bold.italic.red(' AtlantJS.dev ')
+    .bold.italic('and know more commands to make your life easier')
+
+  terminal.bold
+    .italic(`\n\n              Developed with`)
+    .bold(` ${getEmoji('heart')} `)
+    .bold.italic(` for Matheus Antonio\n\n`)
+}
+
+export async function cd(path) {
+  await system.run(`cd ${path}`)
+}

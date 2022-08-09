@@ -1,13 +1,28 @@
-import { getListFilesInfo, clearTempFiles } from '../extends/file-manager'
+import {
+  getListFilesInfo,
+  clearTempFiles,
+} from '../extends/services/file-service'
 import {
   installPackagesCommand,
-  startGitCommand,
   openProjectCommand,
-  startRepositoryCommand,
   createFilesLayerCommand,
-  infoAfterCreate,
-  footerTerminalLog,
-} from '../extends/commands'
+} from '../extends/commands/layers-commands'
+import {
+  // infoAfterCreate,
+  printFooter,
+  cd,
+  printInfoCommands,
+} from '../extends/commands/terminal-commands'
+import {
+  startGitCommand,
+  startRepositoryCommand,
+} from '../extends/commands/git-commands'
+import {
+  buildAppWithHerokuCommand,
+  createBoardTrelloCommand,
+  createNotionWikiCommand,
+} from '../extends/commands/implementations-commands'
+import { Environments, Integrations } from '../extends/types'
 
 module.exports = {
   name: 'create-app:backend',
@@ -19,28 +34,12 @@ module.exports = {
     const FOLDER_API_TEMPLATE = 'back-end/api'
     const FOLDER_CORE_TEMPLATE = 'core'
 
-    const {
-      repo: gitRepoUrl,
-      trello: trelloUrl,
-      notion: notionUrl,
-      heroku: herokuUrl,
-      properties: dtoProperties,
-      module: moduleName,
-      name: appName,
-      googleAnalytics,
-      adMob,
-    } = toolbox.parameters.options
+    const { options } = parameters
 
-    const name: string = parameters.first || '.' || appName
+    const name: string = parameters.first || '.'
 
-    const backendFilesList: Array<unknown> = getListFilesInfo(
-      FOLDER_API_TEMPLATE,
-      name
-    )
-    const coreFilesList: Array<unknown> = getListFilesInfo(
-      FOLDER_CORE_TEMPLATE,
-      name
-    )
+    const backendFilesList = getListFilesInfo(FOLDER_API_TEMPLATE, name)
+    const coreFilesList = getListFilesInfo(FOLDER_CORE_TEMPLATE, name)
 
     await createFilesLayerCommand(template, backendFilesList, `backend ${name}`)
 
@@ -51,63 +50,42 @@ module.exports = {
     setTimeout(async () => {
       await clearTempFiles()
 
-      if (await installPackagesCommand(name)) {
-        await startGitCommand(name)
-        await openProjectCommand(name)
+      await cd('.')
+
+      if (await installPackagesCommand()) {
+        await startGitCommand()
+        await openProjectCommand()
       }
 
-      if (gitRepoUrl) {
-        await startRepositoryCommand(name, gitRepoUrl)
-      }
+      let integrations = []
+      let responseIntegrations = []
 
-      // if (trelloUrl) {
-      //   await createBoardTrelloCommand(name, trelloUrl)
-      // }
-
-      // if (notionUrl) {
-      //   await createNotionWikiCommand(name, trelloUrl)
-      // }
-
-      // if (herokuUrl && gitRepoUrl) {
-      //   await buildAppWithHerokuCommand(name, trelloUrl, gitRepoUrl)
-      // } else if (herokuUrl === undefined) {
-      //   await showErrorLog(
-      //     'To make the application build, it is necessary to inform the repository URL where the code is hosted'
-      //   )
-      // } else if (herokuUrl && gitRepoUrl === undefined) {
-      //   await showErrorLog(
-      //     'To make the application build, it is necessary to inform the heroku URL where the code is hosted'
-      //   )
-      // }
-
-      // if (moduleName && dtoProperties) {
-      //   await createModuleWithDto(name, trelloUrl)
-      // } else if (dtoProperties && moduleName === undefined) {
-      //   await showErrorLog(
-      //     'It is necessary to inform the name of the module to create it'
-      //   )
-      // }
-
-      // if (moduleName) {
-      //   await createModuleCommand(name, trelloUrl)
-      // }
-      infoAfterCreate({
-        trelloUrl,
-        notionUrl,
-        herokuUrl,
-        gitRepoUrl,
-        figmaUrl: false,
-        adMob,
-        googleAnalytics,
-        expo: false,
-        dtoProperties,
-        moduleName,
-        backend: true,
-        frontend: false,
-        mobile: false,
+      Object.keys(options).map((command) => {
+        integrations.push(command)
       })
-    }, 1000)
 
-    footerTerminalLog()
+      integrations.map((command) => {
+        switch (command) {
+          case Integrations.GIT_REPO:
+            responseIntegrations.push(startRepositoryCommand(options.repo))
+            break
+          case Integrations.TRELLO:
+            responseIntegrations.push(createBoardTrelloCommand('credential'))
+            break
+          case Integrations.NOTION:
+            responseIntegrations.push(createNotionWikiCommand('credential'))
+            break
+          case Integrations.HEROKU:
+            responseIntegrations.push(
+              buildAppWithHerokuCommand('credential', 'gitRepoUrl')
+            )
+            break
+          default:
+        }
+      })
+
+      printInfoCommands(responseIntegrations, Environments.BACKEND)
+      printFooter()
+    }, 1000)
   },
 }

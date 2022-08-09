@@ -12,7 +12,7 @@ import { FileName, filesStructure } from './files-structure'
 import { lowerFirstLetter, upperFirstLetter } from '../utils'
 
 function getPathsTemplate(templateName: string, arrayOfFiles?) {
-  const PATH_TEMPLATE = resolve(__dirname, '..', 'templates', templateName)
+  const PATH_TEMPLATE = resolve(__dirname, '..', '..', 'templates', templateName)
 
   let files = readdirSync(PATH_TEMPLATE)
 
@@ -157,7 +157,6 @@ export function getListModuleInfo(
   props,
   entityJsonPaths?: string
 ) {
-  console.log('🚀 ~ file: file-manager.ts ~ line 159 ~ name', name)
   const PATH_MODULE_FILES = 'back-end/modules'
 
   const files = getPathsTemplate(PATH_MODULE_FILES)
