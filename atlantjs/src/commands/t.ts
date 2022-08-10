@@ -1,12 +1,12 @@
 import { startRepositoryCommand } from '../extends/commands/git-commands'
 import {
-  buildAppWithHerokuCommand,
+  buildAppCommand,
   createBoardTrelloCommand,
   createNotionWikiCommand,
 } from '../extends/commands/implementations-commands'
 import { printInfoCommands } from '../extends/commands/terminal-commands'
 
-import { Environments } from '../extends/types'
+import { Environments, Response } from '../extends/types'
 import { Integrations } from '../extends/types'
 
 module.exports = {
@@ -19,36 +19,36 @@ module.exports = {
     const { options } = parameters
 
     let integrations = []
-    let responses = []
 
     Object.keys(options).map((command) => {
       integrations.push(command)
     })
 
-    integrations.map((command) => {
-      switch (command) {
-        case Integrations.GIT_REPO:
-          responses.push(startRepositoryCommand(options.repo))
-          break
-        case Integrations.TRELLO:
-          responses.push(createBoardTrelloCommand('credential'))
-          break
-        case Integrations.NOTION:
-          responses.push(createNotionWikiCommand('credential'))
-          break
-        case Integrations.HEROKU:
-          responses.push(buildAppWithHerokuCommand('credential', 'gitRepoUrl'))
-          break
-        default:
-      }
-    })
+    const response = await Promise.all(
+      integrations.map(async (command) => {
+        let responses: Array<Response> = []
+        switch (command) {
+          case Integrations.REPO:
+            responses.push(await startRepositoryCommand(options.repo))
+            break
+          case Integrations.TRELLO:
+            responses.push(await createBoardTrelloCommand('credential'))
+            break
+          case Integrations.WIKI:
+            responses.push(await createNotionWikiCommand('credential'))
+            break
+          case Integrations.BUILD:
+            responses.push(await buildAppCommand('credential', 'gitRepoUrl'))
+            break
+          default:
+        }
 
-    // const responses = [
-    //   {
-    //     infoText: `\r\n\r\nteste\r\n\r\n`,
-    //   },
-    // ]
-
-    // printInfoCommands(responses, Environments.BACKEND)
+        return responses
+      })
+    )
+    printInfoCommands(
+      response.map((a) => a[0]),
+      Environments.BACKEND
+    )
   },
 }

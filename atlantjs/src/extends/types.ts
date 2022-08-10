@@ -1,8 +1,8 @@
 export enum Integrations {
   TRELLO = 'trello',
-  NOTION = 'wiki',
-  HEROKU = 'build',
-  GIT_REPO = 'repo',
+  WIKI = 'wiki',
+  BUILD = 'build',
+  REPO = 'repo',
   FIGMA = 'figma',
   AD_MOB = 'admob',
   GOOGLE_ANALYTICS = 'google-analytics',

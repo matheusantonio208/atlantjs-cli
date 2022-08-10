@@ -8,9 +8,7 @@ import {
   createFilesLayerCommand,
 } from '../extends/commands/layers-commands'
 import {
-  // infoAfterCreate,
   printFooter,
-  cd,
   printInfoCommands,
 } from '../extends/commands/terminal-commands'
 import {
@@ -18,14 +16,14 @@ import {
   startRepositoryCommand,
 } from '../extends/commands/git-commands'
 import {
-  buildAppWithHerokuCommand,
+  buildAppCommand,
   createBoardTrelloCommand,
   createNotionWikiCommand,
 } from '../extends/commands/implementations-commands'
-import { Environments, Integrations } from '../extends/types'
+import { Environments, Integrations, Response } from '../extends/types'
 
 module.exports = {
-  name: 'create-app:backend',
+  name: 'create:backend',
   description: 'Create the initial files of the application',
 
   run: async (toolbox) => {
@@ -50,41 +48,43 @@ module.exports = {
     setTimeout(async () => {
       await clearTempFiles()
 
-      await cd('.')
-
-      if (await installPackagesCommand()) {
-        await startGitCommand()
-        await openProjectCommand()
+      if (await installPackagesCommand(name)) {
+        await startGitCommand(name)
+        await openProjectCommand(name)
       }
 
       let integrations = []
-      let responseIntegrations = []
 
       Object.keys(options).map((command) => {
         integrations.push(command)
       })
 
-      integrations.map((command) => {
-        switch (command) {
-          case Integrations.GIT_REPO:
-            responseIntegrations.push(startRepositoryCommand(options.repo))
-            break
-          case Integrations.TRELLO:
-            responseIntegrations.push(createBoardTrelloCommand('credential'))
-            break
-          case Integrations.NOTION:
-            responseIntegrations.push(createNotionWikiCommand('credential'))
-            break
-          case Integrations.HEROKU:
-            responseIntegrations.push(
-              buildAppWithHerokuCommand('credential', 'gitRepoUrl')
-            )
-            break
-          default:
-        }
-      })
+      const response = await Promise.all(
+        integrations.map(async (command) => {
+          let res: Array<Response> = []
+          switch (command) {
+            case Integrations.REPO:
+              res.push(await startRepositoryCommand(options.repo))
+              break
+            case Integrations.TRELLO:
+              res.push(await createBoardTrelloCommand('credential'))
+              break
+            case Integrations.WIKI:
+              res.push(await createNotionWikiCommand('credential'))
+              break
+            case Integrations.BUILD:
+              res.push(await buildAppCommand('credential', 'gitRepoUrl'))
+              break
+            default:
+          }
+          return res
+        })
+      )
 
-      printInfoCommands(responseIntegrations, Environments.BACKEND)
+      printInfoCommands(
+        response.map((a) => a[0]),
+        Environments.BACKEND
+      )
       printFooter()
     }, 1000)
   },

@@ -1,40 +1,50 @@
 import { system } from 'gluegun'
 import ora = require('ora')
+import { Response } from '../types'
+import { log } from '../utils/logs-messages'
 
-export async function startGitCommand() {
-  const spinner = ora('Initializing Git...').start()
+export async function startGitCommand(dirProject?): Promise<Response> {
+  const spinner = ora(log.git.start).start()
+
   try {
     await system.run(
-      `git init && git add . && git commit -m "feat: add back-end layer layer" && git branch -M main`
+      `cd ${
+        dirProject || '.'
+      } && git init && git add . && git commit -m "feat: add back-end layer layer" && git branch -M main`
     )
     spinner.stop()
-    ora('Git success initialized!').succeed()
+
+    ora(log.git.success).succeed()
   } catch (error) {
-    spinner.fail('Failure to start the git')
+    spinner.fail(log.git.fail)
   }
+  return { infoText: log.git.info }
 }
 
-export async function createCommitCommand(message) {
-  const spinner = ora('Creating Commit...').start()
+export async function createCommitCommand(message): Promise<Response> {
+  const spinner = ora(log.commit.start).start()
   try {
-    await system.run(`git add . && git commit -m "${message}" && git push`)
+    await system.run(`git add . && git commit -m "${message}"`)
     spinner.stop()
-    ora('Commit created successfully!').succeed()
+
+    ora(log.commit.success).succeed()
   } catch (error) {
-    spinner.fail('Failure when performing Commit')
+    spinner.fail(log.commit.fail)
   }
+  return { infoText: log.commit.info }
 }
 
-export async function startRepositoryCommand(repoUrl) {
-  const spinner = ora('Initializing Repository...').start()
+export async function startRepositoryCommand(repoUrl): Promise<Response> {
+  const spinner = ora(log.repository.start).start()
   try {
     await system.run(`
     git remote add origin ${repoUrl} &&
     git push -u origin main
   `)
     spinner.stop()
-    ora('Repository Successful initialized!').succeed()
+    ora(log.repository.success).succeed()
   } catch (error) {
-    spinner.fail('Failure to start the Repository')
+    spinner.fail(log.repository.fail)
   }
+  return { infoText: log.repository.info }
 }

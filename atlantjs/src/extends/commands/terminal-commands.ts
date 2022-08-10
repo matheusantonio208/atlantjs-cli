@@ -2,13 +2,13 @@ import { terminal } from 'terminal-kit'
 import { get as getEmoji } from 'node-emoji'
 import { system } from 'gluegun'
 import { Environments, Response } from '../types'
-import { logMessage } from '../utils/logs-messages'
+import { log } from '../utils/logs-messages'
 
 export function printInfoCommands(
   responses: Array<Response>,
   environments: Environments
 ) {
-  terminal.table([[logMessage.titleBox]], {
+  terminal.table([[log.titleBox]], {
     hasBorder: true,
     borderAttr: { color: 'blue' },
     width: 30,
@@ -16,15 +16,15 @@ export function printInfoCommands(
 
   switch (environments) {
     case Environments.BACKEND:
-      terminal(logMessage.docBackend)
+      terminal(log.docBackend)
       break
     case Environments.FRONTEND:
-      terminal(logMessage.docFrontend)
+      terminal(log.docFrontend)
       break
     default:
   }
 
-  terminal(`${logMessage.startDev}${logMessage.startDebug}`)
+  terminal(`${log.startDev}${log.startDebug}`)
 
   responses.map((response) => {
     terminal(response.infoText)
@@ -32,7 +32,7 @@ export function printInfoCommands(
 
   if (responses) {
     terminal.bold(
-      `${getEmoji('arrow_up')}  ${logMessage.linkIndicator} ${getEmoji(
+      `${getEmoji('arrow_up')}  ${log.linkIndicator} ${getEmoji(
         'arrow_up'
       )}\n\n`
     )
@@ -44,9 +44,9 @@ export function printFooter() {
     .yellow(`\n${getEmoji('warning')}`)
     .bold.red(` Do not`)
     .bold.yellow(` delete comments lines in this standard `)
-    .bold.italic.gray(`//! Section-Name.`)
+    .bold.italic.gray(`//! Section-Name.\n`)
     .bold.yellow(
-      ` It is from them that we know the structure of your code to perform merge`
+      `It is from them that we know the structure of your code to perform merge`
     )
 
   terminal.bold
@@ -54,12 +54,12 @@ export function printFooter() {
     .bold.italic.green(' --help ')
     .bold.italic('to access doc cli of')
     .bold.italic.red(' AtlantJS.dev ')
-    .bold.italic('and know more commands to make your life easier')
+    .bold.italic('and know more commands to make your life easier\n\n')
 
-  terminal.bold
-    .italic(`\n\n              Developed with`)
-    .bold(` ${getEmoji('heart')} `)
-    .bold.italic(` for Matheus Antonio\n\n`)
+  // terminal.bold
+  //   .italic(`\n\n              Developed with`)
+  //   .bold(` ${getEmoji('heart')} `)
+  //   .bold.italic(` for Matheus Antonio\n\n`)
 }
 
 export async function cd(path) {
