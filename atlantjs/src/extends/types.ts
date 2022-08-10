@@ -1,4 +1,4 @@
-export enum Integrations {
+export enum FlagsBackend {
   TRELLO = 'trello',
   WIKI = 'wiki',
   BUILD = 'build',
@@ -6,9 +6,15 @@ export enum Integrations {
   FIGMA = 'figma',
   AD_MOB = 'admob',
   GOOGLE_ANALYTICS = 'google-analytics',
-  EXPO = 'expo',
 }
 
+export enum FlagsFrontend {
+  FIGMA = 'figma',
+}
+
+export enum FlagsMobile {
+  EXPO = 'expo',
+}
 export enum Environments {
   BACKEND,
   FRONTEND,

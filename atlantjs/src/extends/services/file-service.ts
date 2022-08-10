@@ -12,7 +12,13 @@ import { FileName, filesStructure } from './files-structure'
 import { lowerFirstLetter, upperFirstLetter } from '../utils'
 
 function getPathsTemplate(templateName: string, arrayOfFiles?) {
-  const PATH_TEMPLATE = resolve(__dirname, '..', '..', 'templates', templateName)
+  const PATH_TEMPLATE = resolve(
+    __dirname,
+    '..',
+    '..',
+    'templates',
+    templateName
+  )
 
   let files = readdirSync(PATH_TEMPLATE)
 
@@ -100,6 +106,10 @@ export async function createFiles(templateToolbox, filesInfoArray) {
       await save(resolve(file.target), fileTempString)
     }
   })
+}
+
+export async function createEntity(entityPath) {
+  console.log(entityPath)
 }
 
 function parseJson(filePath: string) {

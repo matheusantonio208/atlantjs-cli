@@ -1,7 +1,7 @@
 import * as ora from 'ora'
 import { system } from 'gluegun'
 import * as chalk from 'chalk'
-import { createFiles } from '../services/file-service'
+import { createEntity, createFiles } from '../services/file-service'
 import { log } from '../utils/logs-messages'
 
 export async function createFilesLayerCommand(
@@ -15,6 +15,7 @@ export async function createFilesLayerCommand(
       chalk.bold.italic.gray(moduleNameToLog)
     )
   ).start()
+
   try {
     await createFiles(template, infoFilesList)
 
@@ -39,7 +40,7 @@ export async function createModuleCommand(
   templateToolbox,
   infoFilesList,
   name,
-  entity
+  entityPath
 ) {
   let spinner = ora(
     log.module.start.replace('$moduleName', chalk.bold.italic.gray(name))
@@ -47,6 +48,7 @@ export async function createModuleCommand(
 
   try {
     await createFiles(templateToolbox, infoFilesList)
+    await createEntity(entityPath)
 
     spinner.stop()
     ora(
@@ -61,6 +63,7 @@ export async function createModuleCommand(
 
 export async function installPackagesCommand(dirProject?) {
   const spinner = ora(log.dependencies.start).start()
+
   try {
     await system.run(`cd ${dirProject || '.'} yarn`)
 
@@ -77,6 +80,7 @@ export async function installPackagesCommand(dirProject?) {
 
 export async function openProjectCommand(dirProject?) {
   const spinner = ora(log.project.start).start()
+
   try {
     await system.run(`code ${dirProject || '.'}`)
 

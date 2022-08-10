@@ -3,11 +3,11 @@ import {
   buildAppCommand,
   createBoardTrelloCommand,
   createNotionWikiCommand,
-} from '../extends/commands/implementations-commands'
+} from '../extends/commands/flags-commands'
 import { printInfoCommands } from '../extends/commands/terminal-commands'
 
 import { Environments, Response } from '../extends/types'
-import { Integrations } from '../extends/types'
+import { FlagsBackend } from '../extends/types'
 
 module.exports = {
   name: 't',
@@ -28,16 +28,16 @@ module.exports = {
       integrations.map(async (command) => {
         let responses: Array<Response> = []
         switch (command) {
-          case Integrations.REPO:
+          case FlagsBackend.REPO:
             responses.push(await startRepositoryCommand(options.repo))
             break
-          case Integrations.TRELLO:
+          case FlagsBackend.TRELLO:
             responses.push(await createBoardTrelloCommand('credential'))
             break
-          case Integrations.WIKI:
+          case FlagsBackend.WIKI:
             responses.push(await createNotionWikiCommand('credential'))
             break
-          case Integrations.BUILD:
+          case FlagsBackend.BUILD:
             responses.push(await buildAppCommand('credential', 'gitRepoUrl'))
             break
           default:
