@@ -1,0 +1,132 @@
+import { filesStructure } from './files-structure'
+export function mergeFiles(fileTempJson, fileUserJson, fileName: string) {
+  const { sectionsUser, sectionsTemp } = getAllInfoJsonSection(
+    fileTempJson,
+    fileUserJson,
+    fileName
+  )
+  const sectionsNames = Object.keys(sectionsUser).map((section) => section)
+
+  let fileUserArray = []
+  let fileMergedArray = []
+
+  fileUserJson.map((line) => {
+    fileUserArray.push(line.content)
+  })
+
+  sectionsNames.map((section) => {
+    console.log(
+      '🚀 ~ file: merge-service.ts ~ line 31 ~ sectionsNames.map ~ sectionsTemp[section].contentSection',
+      sectionsTemp[section].contentSection
+    )
+    fileUserArray.splice(
+      sectionsUser[section].lineSectionStart,
+      0,
+      ...sectionsTemp[section].contentSection
+    )
+    console.log(
+      '🚀 ~ file: merge-service.ts ~ line 27 ~ sectionsNames.map ~ fileUserArray',
+      fileUserArray
+    )
+
+    fileMergedArray = createConflicts(
+      fileUserArray,
+      sectionsUser,
+      sectionsTemp,
+      section
+    )
+  })
+
+  // const fileMergedString = fileMergedArray.join('\n')
+
+  // return fileMergedString
+}
+
+export function createConflicts(
+  fileUserArray,
+  sectionsUser,
+  sectionsTemp,
+  section
+) {
+  let newFileUserArray = fileUserArray
+
+  newFileUserArray.splice(sectionsUser[section].lineSectionStart, 0, ``)
+
+  newFileUserArray.splice(
+    sectionsUser[section].lineSectionStart,
+    0,
+    `<<<<<<< HEAD ${section}`
+  )
+  // newFileUserArray.splice(sectionsUser[section].lineSectionStart, 0, ``)
+
+  const lineSectionUserStart = sectionsUser[section].lineSectionStart
+  const lineSectionUserEnd = sectionsUser[section].lineSectionEnd
+  const totalLineTempSection = sectionsTemp[section].contentSection.length
+
+  const endUserSection =
+    lineSectionUserEnd >= totalLineTempSection
+      ? lineSectionUserEnd - totalLineTempSection
+      : lineSectionUserStart + totalLineTempSection
+
+  // newFileUserArray.splice(endUserSection, 0, '')
+  // newFileUserArray.splice(endUserSection, 0, '=======')
+  // newFileUserArray.splice(lineSectionUserEnd + totalLineTempSection + 3, 0, ``)
+  // newFileUserArray.splice(
+  //   lineSectionUserEnd + totalLineTempSection + 3,
+  //   0,
+  //   `>>>>>>> TEMP ${section}`
+  // )
+
+  return newFileUserArray
+}
+
+export function getAllInfoJsonSection(fileTempJson, fileUserJson, fileName) {
+  const sectionsInfoJson = filesStructure(fileName)
+
+  let sectionsUser = {}
+  let sectionsTemp = {}
+
+  sectionsInfoJson.map((section) => {
+    const sectionUser = getSection(fileUserJson, section.name, section.range)
+    const sectionTemp = getSection(fileTempJson, section.name, section.range)
+
+    Object.assign(sectionsUser, sectionUser)
+    Object.assign(sectionsTemp, sectionTemp)
+  })
+
+  return { sectionsUser, sectionsTemp }
+}
+
+export function getSection(
+  fileJson,
+  sectionName,
+  { contentSectionStart, contentSectionEnd }
+) {
+  let lineSectionStart
+  let lineSectionEnd
+  let contentSection = []
+
+  fileJson.filter((lineJson) => {
+    const { line, content } = lineJson
+
+    if (content.trim().startsWith(contentSectionStart.trim())) {
+      lineSectionStart === undefined
+        ? (lineSectionStart = line)
+        : lineSectionStart
+    }
+
+    if (content.trim().startsWith(contentSectionEnd.trim())) {
+      lineSectionEnd = line
+    }
+  })
+
+  fileJson.filter((lineJson) => {
+    const { line, content } = lineJson
+
+    if (line > lineSectionStart && line < lineSectionEnd) {
+      contentSection.push(content)
+    }
+  })
+
+  return { [sectionName]: { lineSectionStart, lineSectionEnd, contentSection } }
+}

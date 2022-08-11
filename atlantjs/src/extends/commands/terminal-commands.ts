@@ -24,7 +24,7 @@ export function printInfoCommands(
     default:
   }
 
-  terminal(`${log.startDev}${log.startDebug}`)
+  terminal(`${log.script.dev}${log.script.debug}`)
 
   responses.map((response) => {
     terminal(response.infoText)

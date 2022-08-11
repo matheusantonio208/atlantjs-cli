@@ -1,0 +1,73 @@
+import { Schema } from 'mongoose';
+import <%= props.moduleNameUpper %> from '../../schemas/<%= props.moduleNameUpper %>';
+
+import {
+  <%= props.moduleNameUpper %>CreatingDto,
+  <%= props.moduleNameUpper %>CreatedDto,
+  <%= props.moduleNameUpper %>ToUpdateDto,
+} from './dto/index.dto';
+
+class <%= props.moduleNameUpper %>Repository {
+  async create(<%= props.moduleNameLower %>: <%= props.moduleNameUpper %>CreatingDto): Promise<<%= props.moduleNameUpper %>CreatedDto> {
+    const <%= props.moduleNameLower %>Create = new <%= props.moduleNameUpper %>(<%= props.moduleNameLower %>);
+
+    if (await <%= props.moduleNameLower %>Create.save()) {
+      return <%= props.moduleNameLower %>Create;
+    }
+
+    throw new Error(`Error to create <%= props.moduleNameLower %>`);
+  }
+
+  async getOneById(id: Schema.Types.ObjectId): Promise<<%= props.moduleNameUpper %>CreatedDto> {
+    const <%= props.moduleNameLower %>: <%= props.moduleNameUpper %>CreatedDto = await <%= props.moduleNameUpper %>.findById(id);
+    if (<%= props.moduleNameLower %>) return <%= props.moduleNameLower %>;
+
+    throw new Error(`Error to get <%= props.moduleNameLower %>`);
+  }
+
+  async listAll(
+    property: string,
+    sort: string,
+    itensPerPage: number,
+    pagination: number,
+  ): Promise<Array<<%= props.moduleNameUpper %>CreatedDto>> {
+    const <%= props.moduleNameLower %>s: Array<<%= props.moduleNameUpper %>CreatedDto> = await <%= props.moduleNameUpper %>.find({}, (error, docs) => {
+      if (!error) return docs;
+      throw error;
+    })
+      .sort([[property, sort]])
+      .skip(pagination)
+      .limit(itensPerPage)
+      .exec();
+
+    if (<%= props.moduleNameLower %>s) return <%= props.moduleNameLower %>s;
+
+    throw new Error(`Error to list categories`);
+  }
+
+  async updateById(
+    id: Schema.Types.ObjectId,
+    data: <%= props.moduleNameUpper %>ToUpdateDto,
+  ): Promise<<%= props.moduleNameUpper %>CreatedDto> {
+    const updated<%= props.moduleNameUpper %>: <%= props.moduleNameUpper %>CreatedDto = await <%= props.moduleNameUpper %>.findByIdAndUpdate(
+      id,
+      data,
+      (error, document) => {
+        if (!error) return document;
+        throw error;
+      },
+    );
+
+    if (updated<%= props.moduleNameUpper %>) return updated<%= props.moduleNameUpper %>;
+
+    throw new Error(`Error to update <%= props.moduleNameLower %>`);
+  }
+
+  async deleteById(id: Schema.Types.ObjectId): Promise<Boolean> {
+    if (await <%= props.moduleNameUpper %>.deleteOne({ _id: id })) return true;
+
+    throw new Error(`Error to delete <%= props.moduleNameLower %>`);
+  }
+}
+
+export default new <%= props.moduleNameUpper %>Repository();

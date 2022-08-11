@@ -2,10 +2,21 @@ export const log = {
   titleBox: `     Let's go to coder!`,
   docBackend: `Open documentation end-points with:\n❯    ^gyarn docs^ access in ^bhttp://localhost:8080/docs^`,
   docFrontend: `Open documentation components with:\n❯    ^gyarn docs^ access in ^bhttp://localhost:8080/docs^`,
-  startDev: '\n\nStart development with:\n❯    ^gyarn dev^ access in ',
-  startDebug: '\n\nStart debug with:\n❯    ^gyarn dev:debug\n\n^',
-  linkIndicator: 'Infos about your project',
+  script: {
+    dev: '\n\nStart development with:\n❯    ^gyarn dev^ access in ',
+    debug: '\n\nStart debug with:\n❯    ^gyarn dev:debug\n\n^',
+  },
 
+  linkIndicator: 'Infos about your project',
+  expo: {
+    info: 'Access Expo in:\n❯    ^bhttp://expo.com/^\n\n',
+  },
+  admob: {
+    info: 'Access AdMob Dashboard in:\n❯    ^bhttp://expo.com/^\n\n',
+  },
+  googleAnalitics: {
+    info: 'Access Analytics Dashboard in:\n❯    ^bhttp://expo.com/^\n\n',
+  },
   git: {
     start: 'Initializing Git...',
     success: 'Git success initialized!',
@@ -22,7 +33,7 @@ export const log = {
     start: 'Initializing Repository...',
     success: 'Repository Successful initialized!',
     fail: 'Failure to start the Repository',
-    info: '^gyarn docs^ access in ^bhttp://localhost:8080/docs^',
+    info: 'Access Repository in:\n❯    ^bhttp://github.com/^\n\n',
   },
   project: {
     start: 'Opening the project...',
@@ -47,5 +58,14 @@ export const log = {
     success: `Files $layerName created successfully!`,
     fail: 'Fail to create files of $layerName',
     info: '',
+  },
+  figma: {
+    info: 'Access design system in:\n❯    ^bhttp://figma.com/^\n\n',
+  },
+  trello: {
+    info: 'Trello board access in:\n❯    ^b${trelloResponse}^\n\n',
+  },
+  wiki: {
+    info: 'Access Wiki ${chalk.bold.italic.gray(notionResponse)} in:\n❯    ^bhttp://notion.so/^\n\n',
   },
 }

@@ -8,8 +8,9 @@ import {
   writeFileSync,
 } from 'fs'
 import * as rimraf from 'rimraf'
-import { FileName, filesStructure } from './files-structure'
+import { FileName } from './files-structure'
 import { lowerFirstLetter, upperFirstLetter } from '../utils'
+import { mergeFiles } from './merge-service'
 
 function getPathsTemplate(templateName: string, arrayOfFiles?) {
   const PATH_TEMPLATE = resolve(
@@ -43,101 +44,6 @@ function getPathsTemplate(templateName: string, arrayOfFiles?) {
   })
 
   return templates
-}
-
-async function createTempFiles(templateToolbox, fileInfo) {
-  await templateToolbox.generate({
-    template: fileInfo.template,
-    target: resolve('temp', fileInfo.target),
-    props: fileInfo.props,
-  })
-}
-
-export async function clearTempFiles() {
-  const tempFilesPath = resolve('temp')
-  rimraf.sync(tempFilesPath)
-}
-
-async function save(filePath: string, fileString: string) {
-  mkdirSync(dirname(filePath), { recursive: true })
-  writeFileSync(filePath, fileString)
-}
-
-export async function createFiles(templateToolbox, filesInfoArray) {
-  filesInfoArray.map(async (file) => {
-    await createTempFiles(templateToolbox, file)
-
-    const fileTempJson = parseJson(resolve('temp', file.target))
-    const fileTempString = await parseString(fileTempJson)
-
-    const isFileUserExists = await fileExists(file.target)
-
-    if (isFileUserExists) {
-      const fileUserJson = parseJson(file.target)
-
-      const fileName = basename(file.target).replace(/\.[^/.]+$/, '')
-      const fileExtension = basename(file.target).split('.').pop()
-
-      let hasPatternFile: boolean
-
-      Object.values(FileName).map(async (name) => {
-        if (fileName === name) {
-          const fileMergedString = mergeFiles(
-            fileTempJson,
-            fileUserJson,
-            fileName
-          )
-          hasPatternFile = true
-          await save(resolve(file.target), fileMergedString)
-        } else {
-          hasPatternFile = false
-        }
-      })
-
-      if (hasPatternFile) {
-        const newNameFile = `${file.target.replace(
-          /[^\/]*$/,
-          ''
-        )}${fileName}.${fileExtension} - [IN CONFLICT]`
-
-        await save(resolve(newNameFile), fileTempString)
-      }
-    } else {
-      await save(resolve(file.target), fileTempString)
-    }
-  })
-}
-
-export async function createEntity(entityPath) {
-  console.log(entityPath)
-}
-
-function parseJson(filePath: string) {
-  const content = readFileSync(filePath).toString()
-
-  const contentArray = content.split('\n')
-
-  const contentJson = contentArray.map((content, line) => {
-    return { line, content }
-  })
-
-  return contentJson
-}
-
-async function parseString(fileJson) {
-  let content = []
-
-  fileJson.map((file) => {
-    content.push(JSON.parse(JSON.stringify(file.content)).replace('\r', ''))
-  })
-
-  const fileToString = content.join('\n')
-
-  return fileToString
-}
-
-async function fileExists(filePath: string) {
-  return jetpack.existsAsync(filePath)
 }
 
 export function getListFilesInfo(
@@ -191,122 +97,98 @@ export function getListModuleInfo(
   return moduleFiles
 }
 
-function mergeFiles(fileTempJson, fileUserJson, fileName: string) {
-  const { sectionsUser, sectionsTemp } = getAllRanges(
-    fileTempJson,
-    fileUserJson,
-    fileName
-  )
-
-  const sectionsNames = Object.keys(sectionsUser).map((section) => section)
-
-  let fileUserArray = []
-  let fileMergedArray = []
-
-  fileUserJson.map((line) => {
-    fileUserArray.push(line.content)
+async function createTempFiles(templateToolbox, fileInfo) {
+  await templateToolbox.generate({
+    template: fileInfo.template,
+    target: resolve('temp', fileInfo.target),
+    props: fileInfo.props,
   })
-
-  sectionsNames.map((section) => {
-    fileUserArray.splice(
-      sectionsUser[section].lineSectionStart,
-      0,
-      ...sectionsTemp[section].contentSection
-    )
-    fileMergedArray = createConflicts(
-      fileUserArray,
-      sectionsUser,
-      sectionsTemp,
-      section
-    )
-  })
-
-  const fileMergedString = fileMergedArray.join('\n')
-
-  return fileMergedString
 }
 
-function createConflicts(fileUserArray, sectionsUser, sectionsTemp, section) {
-  let newFileUserArray = fileUserArray
-
-  newFileUserArray.splice(
-    sectionsUser[section].lineSectionStart,
-    0,
-    `<<<<<<< HEAD ${section}`
-  )
-
-  const lineSectionUserStart = sectionsUser[section].lineSectionStart
-  const lineSectionUserEnd = sectionsUser[section].lineSectionEnd
-  const totalLineTempSection = sectionsTemp[section].contentSection.length
-
-  const endUserSection =
-    lineSectionUserEnd >= totalLineTempSection
-      ? lineSectionUserEnd - totalLineTempSection
-      : lineSectionUserStart + totalLineTempSection + 1
-
-  newFileUserArray.splice(endUserSection, 0, '=======')
-  newFileUserArray.splice(
-    lineSectionUserEnd + totalLineTempSection + 3,
-    0,
-    `>>>>>>> TEMP ${section}`
-  )
-
-  return newFileUserArray
+export async function clearTempFiles() {
+  const tempFilesPath = resolve('temp')
+  rimraf.sync(tempFilesPath)
 }
 
-function getAllRanges(fileTempJson, fileUserJson, fileName) {
-  const files = filesStructure(fileName)
+export async function createFiles(templateToolbox, filesInfoArray) {
+  filesInfoArray.map(async (file) => {
+    await createTempFiles(templateToolbox, file)
 
-  let sectionsUser = {}
-  let sectionsTemp = {}
+    const fileTempJson = parseJson(resolve('temp', file.target))
+    const fileTempString = await parseString(fileTempJson)
 
-  files.map((section) => {
-    const sectionName = section.name
-    const sectionRange = section.range
+    const isFileUserExists = await fileExists(file.target)
 
-    Object.assign(
-      sectionsUser,
-      getRange(fileUserJson, sectionName, sectionRange)
-    )
-    Object.assign(
-      sectionsTemp,
-      getRange(fileTempJson, sectionName, sectionRange)
-    )
+    if (isFileUserExists) {
+      const fileUserJson = parseJson(file.target)
+
+      const fileName = basename(file.target).replace(/\.[^/.]+$/, '')
+      const fileExtension = basename(file.target).split('.').pop()
+
+      let hasPatternFile: boolean
+
+      Object.values(FileName).map(async (name) => {
+        if (fileName === name) {
+          const fileMergedString = mergeFiles(
+            fileTempJson,
+            fileUserJson,
+            fileName
+          )
+
+          hasPatternFile = true
+          // await save(resolve(file.target), fileMergedString)
+        } else {
+          hasPatternFile = false
+        }
+      })
+
+      if (hasPatternFile) {
+        const newNameFile = `${file.target.replace(
+          /[^\/]*$/,
+          ''
+        )}${fileName}.${fileExtension} - [IN CONFLICT]`
+
+        await save(resolve(newNameFile), fileTempString)
+      }
+    } else {
+      await save(resolve(file.target), fileTempString)
+    }
   })
-
-  return { sectionsUser, sectionsTemp }
 }
 
-function getRange(
-  fileJson,
-  sectionName,
-  { contentSectionStart, contentSectionEnd }
-) {
-  let lineSectionStart
-  let lineSectionEnd
-  let contentSection = []
+export async function createEntity(entityPath) {
+  console.log(entityPath)
+}
 
-  fileJson.filter((lineJson) => {
-    const { line, content } = lineJson
+function parseJson(filePath: string) {
+  const content = readFileSync(filePath).toString()
 
-    if (content.trim().startsWith(contentSectionStart.trim())) {
-      lineSectionStart === undefined
-        ? (lineSectionStart = line)
-        : lineSectionStart
-    }
+  const contentArray = content.split('\n')
 
-    if (content.trim().startsWith(contentSectionEnd.trim())) {
-      lineSectionEnd = line
-    }
+  const contentJson = contentArray.map((content, line) => {
+    return { line, content }
   })
 
-  fileJson.filter((lineJson) => {
-    const { line, content } = lineJson
+  return contentJson
+}
 
-    if (line >= lineSectionStart && line <= lineSectionEnd) {
-      contentSection.push(content)
-    }
+export async function parseString(fileJson) {
+  let content = []
+
+  fileJson.map((file) => {
+    content.push(JSON.parse(JSON.stringify(file.content)).replace('\r', ''))
   })
 
-  return { [sectionName]: { lineSectionStart, lineSectionEnd, contentSection } }
+  const fileToString = content.join('\n')
+
+  return fileToString
+}
+
+async function fileExists(filePath: string) {
+  return jetpack.existsAsync(filePath)
+}
+
+async function save(filePath: string, fileString: string) {
+  mkdirSync(dirname(filePath), { recursive: true })
+  writeFileSync(filePath, fileString)
 }
