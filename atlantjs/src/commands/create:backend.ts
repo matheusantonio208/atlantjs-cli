@@ -4,27 +4,27 @@
 
 import {
   getListFilesInfo,
-  // clearTempFiles,
+  clearTempFiles,
 } from '../extends/services/file-service'
 import {
-  // installPackagesCommand,
-  // openProjectCommand,
+  installPackagesCommand,
+  openProjectCommand,
   createFilesLayerCommand,
 } from '../extends/commands/layers-commands'
-// import {
-//   printFooter,
-//   printInfoCommands,
-// } from '../extends/commands/terminal-commands'
-// import {
-//   startGitCommand,
-//   startRepositoryCommand,
-// } from '../extends/commands/git-commands'
-// import {
-//   buildAppCommand,
-//   createBoardTrelloCommand,
-//   createNotionWikiCommand,
-// } from '../extends/commands/flags-commands'
-// import { Environments, FlagsBackend, Response } from '../extends/types'
+import {
+  printFooter,
+  printInfoCommands,
+} from '../extends/commands/terminal-commands'
+import {
+  startGitCommand,
+  startRepositoryCommand,
+} from '../extends/commands/git-commands'
+import {
+  buildAppCommand,
+  createBoardTrelloCommand,
+  createNotionWikiCommand,
+} from '../extends/commands/flags-commands'
+import { Environments, FlagsBackend, Response } from '../extends/types'
 
 module.exports = {
   name: 'create:backend',
@@ -36,7 +36,7 @@ module.exports = {
     const FOLDER_API_TEMPLATE = 'back-end/api'
     const FOLDER_CORE_TEMPLATE = 'core'
 
-    // const { options } = parameters
+    const { options } = parameters
 
     const name: string = parameters.first || '.'
 
@@ -45,51 +45,51 @@ module.exports = {
 
     await createFilesLayerCommand(template, backendFilesList, `backend ${name}`)
 
-    // setTimeout(async () => {
-    //   await createFilesLayerCommand(template, coreFilesList, `core ${name}`)
-    // }, 3000)
+    setTimeout(async () => {
+      await createFilesLayerCommand(template, coreFilesList, `core ${name}`)
+    }, 3000)
 
-    // setTimeout(async () => {
-    //   await clearTempFiles()
+    setTimeout(async () => {
+      await clearTempFiles()
 
-    //   if (await installPackagesCommand(name)) {
-    //     await startGitCommand(name)
-    //     await openProjectCommand(name)
-    //   }
+      if (await installPackagesCommand(name)) {
+        await startGitCommand(name)
+        await openProjectCommand(name)
+      }
 
-    //   let integrations = []
+      let integrations = []
 
-    //   Object.keys(options).map((command) => {
-    //     integrations.push(command)
-    //   })
+      Object.keys(options).map((command) => {
+        integrations.push(command)
+      })
 
-    //   const response = await Promise.all(
-    //     integrations.map(async (command) => {
-    //       let res: Array<Response> = []
-    //       switch (command) {
-    //         case FlagsBackend.REPO:
-    //           res.push(await startRepositoryCommand(options.repo))
-    //           break
-    //         case FlagsBackend.TRELLO:
-    //           res.push(await createBoardTrelloCommand('credential'))
-    //           break
-    //         case FlagsBackend.WIKI:
-    //           res.push(await createNotionWikiCommand('credential'))
-    //           break
-    //         case FlagsBackend.BUILD:
-    //           res.push(await buildAppCommand('credential', 'gitRepoUrl'))
-    //           break
-    //         default:
-    //       }
-    //       return res
-    //     })
-    //   )
+      // const response = await Promise.all(
+      //   integrations.map(async (command) => {
+      //     let res: Array<Response> = []
+      //     switch (command) {
+      //       case FlagsBackend.REPO:
+      //         res.push(await startRepositoryCommand(options.repo))
+      //         break
+      //       case FlagsBackend.TRELLO:
+      //         res.push(await createBoardTrelloCommand('credential'))
+      //         break
+      //       case FlagsBackend.WIKI:
+      //         res.push(await createNotionWikiCommand('credential'))
+      //         break
+      //       case FlagsBackend.BUILD:
+      //         res.push(await buildAppCommand('credential', 'gitRepoUrl'))
+      //         break
+      //       default:
+      //     }
+      //     return res
+      //   })
+      // )
 
-    //   printInfoCommands(
-    //     response.map((res) => res[0]),
-    //     Environments.BACKEND
-    //   )
-    //   printFooter()
-    // }, 1000)
+      // // printInfoCommands(
+      // //   response.map((res) => res[0]),
+      // //   Environments.BACKEND
+      // // )
+      // // printFooter()
+    }, 1000)
   },
 }

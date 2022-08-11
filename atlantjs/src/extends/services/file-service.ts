@@ -134,15 +134,14 @@ export async function createFiles(templateToolbox, filesInfoArray) {
             fileUserJson,
             fileName
           )
-
           hasPatternFile = true
-          // await save(resolve(file.target), fileMergedString)
+          await save(resolve(file.target), fileMergedString)
         } else {
           hasPatternFile = false
         }
       })
 
-      if (hasPatternFile) {
+      if (!hasPatternFile) {
         const newNameFile = `${file.target.replace(
           /[^\/]*$/,
           ''

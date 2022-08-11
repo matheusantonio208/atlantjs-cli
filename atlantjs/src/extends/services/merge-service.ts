@@ -1,4 +1,3 @@
-import { parseString } from './file-service'
 import { filesStructure } from './files-structure'
 export function mergeFiles(fileTempJson, fileUserJson, fileName: string) {
   const { sectionsUser, sectionsTemp } = getAllInfoJsonSection(
@@ -9,24 +8,78 @@ export function mergeFiles(fileTempJson, fileUserJson, fileName: string) {
 
   const sectionsNames = Object.keys(sectionsUser).map((section) => section)
 
-  let infoJsonMergedFile = {}
+  const contentMergedSection = getContentMergedSection(
+    sectionsNames,
+    sectionsUser,
+    sectionsTemp
+  )
 
+  const fileUserArray = getFileUserInArray(fileUserJson)
+  let fileUser = []
+  const sectionsToMerge = Object.keys(contentMergedSection)
+
+  sectionsToMerge.map((section) => {
+    const userFileExcludeLines = excludeContentInLinesBeforeMerge(
+      fileUserArray,
+      sectionsUser,
+      contentMergedSection[section].lineSectionStart,
+      section
+    )
+
+    userFileExcludeLines.splice(
+      contentMergedSection[section].lineSectionStart,
+      0,
+      ...contentMergedSection[section].contentSection
+    )
+
+    fileUser = userFileExcludeLines.filter((e) => {
+      return e !== '[EXCLUDE]' ?? e
+    })
+  })
+
+  let document = ''
+
+  fileUser.map((file) => {
+    document += `${file}\n`
+  })
+
+  return document
+}
+
+function getFileUserInArray(fileUserJson) {
+  let fileUserArray = []
+
+  fileUserJson.map((line) => {
+    fileUserArray.push(line.content)
+  })
+
+  return fileUserArray
+}
+
+function getContentMergedSection(sectionsNames, sectionsUser, sectionsTemp) {
+  let infoJsonMergedFile = {}
   sectionsNames.map((section, index) => {
     let isSameSection =
       sectionsUser[section].contentSection.join() ===
       sectionsTemp[section].contentSection.join()
 
-    let lineSectionStart =
-      sectionsUser[section].lineSectionStart <
-      sectionsTemp[section].lineSectionStart
-        ? sectionsUser[section].lineSectionStart
-        : sectionsTemp[section].lineSectionStart
+    const sections = Object.keys(infoJsonMergedFile)
+    let nextLineStart
+
+    if (index !== 0) {
+      let beforeSection = infoJsonMergedFile[sections[index - 1]]
+      let lengthLineBackSection = beforeSection.contentSection.length
+
+      nextLineStart =
+        sectionsUser[section].lineSectionStart + lengthLineBackSection
+    } else {
+      nextLineStart = sectionsUser[section].lineSectionStart
+    }
 
     Object.assign(infoJsonMergedFile, {
       [section]: {
-        lineSectionStart,
-
-        contentSection: isSameSection
+        lineSectionStart: nextLineStart,
+        contentSection: !isSameSection
           ? [
               `//! ${section}-start`,
               `<<<<<<< HEAD ${section}`,
@@ -45,31 +98,24 @@ export function mergeFiles(fileTempJson, fileUserJson, fileName: string) {
     })
   })
 
-  let fileUserArray = []
+  return infoJsonMergedFile
+}
 
-  fileUserJson.map((line) => {
-    fileUserArray.push(line.content)
-  })
+function excludeContentInLinesBeforeMerge(
+  fileUserArray,
+  sectionsUser,
+  nextLineToStartSection,
+  section
+) {
+  const linesToExclude =
+    sectionsUser[section].lineSectionEnd -
+    sectionsUser[section].lineSectionStart
 
-  Object.keys(infoJsonMergedFile).map((section, index) => {
-    const linesToExclude =
-      sectionsUser[section].lineSectionEnd -
-      sectionsUser[section].lineSectionStart
+  for (let i = 0; i <= linesToExclude; i++) {
+    fileUserArray[nextLineToStartSection + i] = '[EXCLUDE]'
+  }
 
-    for (let i = 0; i <= linesToExclude; i++) {
-      fileUserArray[infoJsonMergedFile[section].lineSectionStart + i] = ''
-    }
-
-    fileUserArray.splice(
-      infoJsonMergedFile[section].lineSectionStart,
-      1 + index,
-      infoJsonMergedFile[section].contentSection
-    )
-  })
-
-  const fileUser = fileUserArray.filter((e) => e).join('\n\r')
-
-  return fileUser
+  return fileUserArray
 }
 
 export function getAllInfoJsonSection(fileTempJson, fileUserJson, fileName) {
