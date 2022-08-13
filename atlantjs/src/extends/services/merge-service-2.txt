@@ -1,0 +1,46 @@
+// export function mergeFiles(fileTempJson, fileUserJson, fileName: string) {
+//   const { sectionsUser, sectionsTemp } = getAllInfoJsonSection(
+//     fileTempJson,
+//     fileUserJson,
+//     fileName
+//   )
+
+//   const sectionsNames = Object.keys(sectionsUser).map((section) => section)
+
+//   const contentMergedSection = getContentMergedSection(
+//     sectionsNames,
+//     sectionsUser,
+//     sectionsTemp
+//   )
+
+//   const fileUserArray = getFileUserInArray(fileUserJson)
+//   let fileUser = []
+//   const sectionsToMerge = Object.keys(contentMergedSection)
+
+//   sectionsToMerge.map((section) => {
+//     const userFileExcludeLines = excludeContentInLinesBeforeMerge(
+//       fileUserArray,
+//       sectionsUser,
+//       contentMergedSection[section].startLine,
+//       section
+//     )
+
+//     userFileExcludeLines.splice(
+//       contentMergedSection[section].startLine,
+//       0,
+//       ...contentMergedSection[section].contentSection
+//     )
+
+//     fileUser = userFileExcludeLines.filter((e) => {
+//       return e !== '[EXCLUDE]' ?? e
+//     })
+//   })
+
+//   let document = ''
+
+//   fileUser.map((file) => {
+//     document += `${file}\n`
+//   })
+
+//   return document
+// }

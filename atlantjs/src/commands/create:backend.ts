@@ -3,7 +3,7 @@
  */
 
 import {
-  getListFilesInfo,
+  getInfoToGenerateFiles,
   clearTempFiles,
 } from '../extends/services/file-service'
 import {
@@ -40,28 +40,29 @@ module.exports = {
 
     const name: string = parameters.first || '.'
 
-    const backendFilesList = getListFilesInfo(FOLDER_API_TEMPLATE, name)
-    const coreFilesList = getListFilesInfo(FOLDER_CORE_TEMPLATE, name)
+    const backendFilesList = getInfoToGenerateFiles(FOLDER_API_TEMPLATE, name)
+
+    const coreFilesList = getInfoToGenerateFiles(FOLDER_CORE_TEMPLATE, name)
 
     await createFilesLayerCommand(template, backendFilesList, `backend ${name}`)
 
     setTimeout(async () => {
       await createFilesLayerCommand(template, coreFilesList, `core ${name}`)
-    }, 3000)
+    }, 1000)
 
     setTimeout(async () => {
       await clearTempFiles()
 
-      if (await installPackagesCommand(name)) {
-        await startGitCommand(name)
-        await openProjectCommand(name)
-      }
+      // if (await installPackagesCommand(name)) {
+      //   await startGitCommand(name)
+      await openProjectCommand(name)
+      // }
 
-      let integrations = []
+      // let integrations = []
 
-      Object.keys(options).map((command) => {
-        integrations.push(command)
-      })
+      // Object.keys(options).map((command) => {
+      //   integrations.push(command)
+      // })
 
       // const response = await Promise.all(
       //   integrations.map(async (command) => {
@@ -85,11 +86,11 @@ module.exports = {
       //   })
       // )
 
-      // // printInfoCommands(
-      // //   response.map((res) => res[0]),
-      // //   Environments.BACKEND
-      // // )
-      // // printFooter()
+      // printInfoCommands(
+      //   response.map((res) => res[0]),
+      //   Environments.BACKEND
+      // )
+      // printFooter()
     }, 1000)
   },
 }

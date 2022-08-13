@@ -16,16 +16,16 @@ export function filesStructure(fileName: string) {
       file.push(
         {
           name: 'constructor',
-          range: {
-            contentSectionStart: '//! constructor-start',
-            contentSectionEnd: '//! constructor-end',
+          tags: {
+            start: '//! constructor-start',
+            end: '//! constructor-end',
           },
         },
         {
           name: 'imports',
-          range: {
-            contentSectionStart: '//! import-start',
-            contentSectionEnd: '//! import-end',
+          tags: {
+            start: '//! import-start',
+            end: '//! import-end',
           },
         }
       )
@@ -35,16 +35,23 @@ export function filesStructure(fileName: string) {
       file.push(
         {
           name: 'dependencies',
-          range: {
-            contentSectionStart: '//! dependencies-start',
-            contentSectionEnd: '//! dependencies-end',
+          tags: {
+            start: '//! dependencies-start',
+            end: '//! dependencies-end',
+          },
+        },
+        {
+          name: 'scripts',
+          tags: {
+            start: '//! scripts-start',
+            end: '//! scripts-end',
           },
         },
         {
           name: 'devDependencies',
-          range: {
-            contentSectionStart: '//! devDependencies-start',
-            contentSectionEnd: '//! devDependencies-end',
+          tags: {
+            start: '//! devDependencies-start',
+            end: '//! devDependencies-end',
           },
         }
       )

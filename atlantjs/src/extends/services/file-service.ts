@@ -46,7 +46,7 @@ function getPathsTemplate(templateName: string, arrayOfFiles?) {
   return templates
 }
 
-export function getListFilesInfo(
+export function getInfoToGenerateFiles(
   module: string,
   appName?: string,
   props?
@@ -103,6 +103,11 @@ async function createTempFiles(templateToolbox, fileInfo) {
     target: resolve('temp', fileInfo.target),
     props: fileInfo.props,
   })
+
+  const fileWithChangesCli = parseArray(resolve('temp', fileInfo.target))
+  const fileWithChangesCliString = await parseString(fileWithChangesCli)
+
+  return { fileWithChangesCli, fileWithChangesCliString }
 }
 
 export async function clearTempFiles() {
@@ -112,45 +117,34 @@ export async function clearTempFiles() {
 
 export async function createFiles(templateToolbox, filesInfoArray) {
   filesInfoArray.map(async (file) => {
-    await createTempFiles(templateToolbox, file)
-
-    const fileTempJson = parseJson(resolve('temp', file.target))
-    const fileTempString = await parseString(fileTempJson)
+    const { fileWithChangesCli, fileWithChangesCliString } =
+      await createTempFiles(templateToolbox, file)
 
     const isFileUserExists = await fileExists(file.target)
 
     if (isFileUserExists) {
-      const fileUserJson = parseJson(file.target)
+      const userFile = parseArray(file.target)
 
-      const fileName = basename(file.target).replace(/\.[^/.]+$/, '')
+      const userFileName = basename(file.target).replace(/\.[^/.]+$/, '')
       const fileExtension = basename(file.target).split('.').pop()
 
-      let hasPatternFile: boolean
+      const isSaveWithPatterns = await saveWithPatterns(
+        userFileName,
+        fileWithChangesCli,
+        userFile,
+        file.target
+      )
 
-      Object.values(FileName).map(async (name) => {
-        if (fileName === name) {
-          const fileMergedString = mergeFiles(
-            fileTempJson,
-            fileUserJson,
-            fileName
-          )
-          hasPatternFile = true
-          await save(resolve(file.target), fileMergedString)
-        } else {
-          hasPatternFile = false
-        }
-      })
+      // if (!isSaveWithPatterns) {
+      //   const newFileName = `${file.target.replace(
+      //     /[^\/]*$/,
+      //     ''
+      //   )}${userFileName}.${fileExtension} - [IN CONFLICT]`
 
-      if (!hasPatternFile) {
-        const newNameFile = `${file.target.replace(
-          /[^\/]*$/,
-          ''
-        )}${fileName}.${fileExtension} - [IN CONFLICT]`
-
-        await save(resolve(newNameFile), fileTempString)
-      }
+      //   await save(resolve(newFileName), fileWithChangesCliString)
+      // }
     } else {
-      await save(resolve(file.target), fileTempString)
+      await save(resolve(file.target), fileWithChangesCliString)
     }
   })
 }
@@ -159,32 +153,40 @@ export async function createEntity(entityPath) {
   console.log(entityPath)
 }
 
-function parseJson(filePath: string) {
+function parseArray(filePath: string) {
   const content = readFileSync(filePath).toString()
 
   const contentArray = content.split('\n')
 
-  const contentJson = contentArray.map((content, line) => {
-    return { line, content }
-  })
-
-  return contentJson
+  return contentArray
 }
 
-export async function parseString(fileJson) {
-  let content = []
-
-  fileJson.map((file) => {
-    content.push(JSON.parse(JSON.stringify(file.content)).replace('\r', ''))
-  })
-
-  const fileToString = content.join('\n')
-
-  return fileToString
+export async function parseString(fileArray) {
+  return fileArray.join('\n')
 }
 
 async function fileExists(filePath: string) {
   return jetpack.existsAsync(filePath)
+}
+
+async function saveWithPatterns(
+  nameFile,
+  fileWithChangesCli,
+  fileUser,
+  target
+) {
+  Object.values(FileName).map(async (name) => {
+    if (nameFile === name) {
+      const fileMergedString = await mergeFiles(
+        nameFile,
+        fileWithChangesCli,
+        fileUser
+      )
+      await save(resolve(target), fileMergedString)
+      return true
+    }
+  })
+  return false
 }
 
 async function save(filePath: string, fileString: string) {
