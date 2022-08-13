@@ -7,7 +7,9 @@ import { log } from '../utils/logs-messages'
 export async function createFilesLayerCommand(
   template,
   infoFilesList: Array<unknown>,
-  moduleNameToLog: string
+  moduleNameToLog: string,
+  moduleA,
+  moduleB
 ) {
   let spinner = ora(
     log.layers.start.replace(
@@ -17,7 +19,7 @@ export async function createFilesLayerCommand(
   ).start()
 
   try {
-    await createFiles(template, infoFilesList)
+    await createFiles(template, infoFilesList, moduleA, moduleB)
 
     spinner.stop()
     ora(
@@ -47,7 +49,7 @@ export async function createModuleCommand(
   ).start()
 
   try {
-    await createFiles(templateToolbox, infoFilesList)
+    await createFiles(templateToolbox, infoFilesList, 'USER', name)
     await createEntity(entityPath)
 
     spinner.stop()

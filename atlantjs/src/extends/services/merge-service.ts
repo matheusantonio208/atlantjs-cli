@@ -1,6 +1,12 @@
 import { parseString } from './file-service'
 import { filesStructure } from './files-structure'
-export function mergeFiles(fileName: string, fileWithChangesCli, fileUser) {
+export function mergeFiles(
+  fileName: string,
+  fileWithChangesCli,
+  fileUser,
+  moduleA,
+  moduleB
+) {
   const sections = filesStructure(fileName)
 
   const { sectionsUser, sectionsWithChangesCli } = getContentSections(
@@ -16,7 +22,9 @@ export function mergeFiles(fileName: string, fileWithChangesCli, fileUser) {
     const sectionMerged = mergeSection(
       section.name,
       sectionsUser[section.name],
-      sectionsWithChangesCli[section.name]
+      sectionsWithChangesCli[section.name],
+      moduleA,
+      moduleB
     )
 
     if (fileMerged.length === 0) {
@@ -36,17 +44,23 @@ export function mergeFiles(fileName: string, fileWithChangesCli, fileUser) {
   return fileMergedString
 }
 
-function mergeSection(section, sectionUser, sectionWithChangesCli) {
-  let inConflict = !(sectionUser === sectionWithChangesCli)
+function mergeSection(
+  section,
+  sectionUser,
+  sectionWithChangesCli,
+  moduleA,
+  moduleB
+) {
+  let inConflict = !(sectionUser.join() === sectionWithChangesCli.join())
   let sectionMerged = []
 
   if (inConflict) {
     sectionMerged = [
-      `<<<<<<< HEAD ${section}`,
+      `<<<<<<< ${moduleA} ==> ${section}`,
       ...sectionUser,
       `=======`,
       ...sectionWithChangesCli,
-      `>>>>>>> TEMP ${section}`,
+      `>>>>>>> ${moduleB} ==> ${section}`,
     ]
   } else {
     sectionMerged = [...sectionUser]

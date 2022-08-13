@@ -115,8 +115,13 @@ export async function clearTempFiles() {
   rimraf.sync(tempFilesPath)
 }
 
-export async function createFiles(templateToolbox, filesInfoArray) {
-  filesInfoArray.map(async (file) => {
+export async function createFiles(
+  templateToolbox,
+  infoFilesList,
+  moduleA,
+  moduleB
+) {
+  infoFilesList.map(async (file) => {
     const { fileWithChangesCli, fileWithChangesCliString } =
       await createTempFiles(templateToolbox, file)
 
@@ -132,17 +137,19 @@ export async function createFiles(templateToolbox, filesInfoArray) {
         userFileName,
         fileWithChangesCli,
         userFile,
-        file.target
+        file.target,
+        moduleA,
+        moduleB
       )
 
-      // if (!isSaveWithPatterns) {
-      //   const newFileName = `${file.target.replace(
-      //     /[^\/]*$/,
-      //     ''
-      //   )}${userFileName}.${fileExtension} - [IN CONFLICT]`
+      if (!isSaveWithPatterns) {
+        const newFileName = `${file.target.replace(
+          /[^\/]*$/,
+          ''
+        )}${userFileName}.${fileExtension} - [IN CONFLICT]`
 
-      //   await save(resolve(newFileName), fileWithChangesCliString)
-      // }
+        await save(resolve(newFileName), fileWithChangesCliString)
+      }
     } else {
       await save(resolve(file.target), fileWithChangesCliString)
     }
@@ -173,20 +180,24 @@ async function saveWithPatterns(
   nameFile,
   fileWithChangesCli,
   fileUser,
-  target
+  target,
+  moduleA,
+  moduleB
 ) {
   Object.values(FileName).map(async (name) => {
     if (nameFile === name) {
       const fileMergedString = await mergeFiles(
         nameFile,
         fileWithChangesCli,
-        fileUser
+        fileUser,
+        moduleA,
+        moduleB
       )
       await save(resolve(target), fileMergedString)
-      return true
+      return false
     }
   })
-  return false
+  return true
 }
 
 async function save(filePath: string, fileString: string) {

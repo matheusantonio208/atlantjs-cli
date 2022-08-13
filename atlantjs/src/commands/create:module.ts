@@ -1,5 +1,6 @@
 import {
   createFilesLayerCommand,
+  createModuleCommand,
   installPackagesCommand,
 } from '../extends/commands/layers-commands'
 
@@ -30,7 +31,12 @@ module.exports = {
       moduleNameLower,
     })
 
-    await createFilesLayerCommand(template, moduleFilesList, `module ${name}`)
+    await createModuleCommand(
+      template,
+      moduleFilesList,
+      `module ${name}`,
+      '/oath'
+    )
 
     setTimeout(async () => {
       await clearTempFiles()

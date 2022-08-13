@@ -25,7 +25,6 @@ import {
   createNotionWikiCommand,
 } from '../extends/commands/flags-commands'
 import { Environments, FlagsBackend, Response } from '../extends/types'
-
 module.exports = {
   name: 'create:backend',
   description: 'Create the initial files of the application',
@@ -35,62 +34,73 @@ module.exports = {
 
     const FOLDER_API_TEMPLATE = 'back-end/api'
     const FOLDER_CORE_TEMPLATE = 'core'
+    const delay = 500
 
     const { options } = parameters
 
     const name: string = parameters.first || '.'
 
-    const backendFilesList = getInfoToGenerateFiles(FOLDER_API_TEMPLATE, name)
-
     const coreFilesList = getInfoToGenerateFiles(FOLDER_CORE_TEMPLATE, name)
-
-    await createFilesLayerCommand(template, backendFilesList, `backend ${name}`)
+    await createFilesLayerCommand(
+      template,
+      coreFilesList,
+      `core ${name}`,
+      FOLDER_API_TEMPLATE,
+      FOLDER_CORE_TEMPLATE
+    )
 
     setTimeout(async () => {
-      await createFilesLayerCommand(template, coreFilesList, `core ${name}`)
-    }, 1000)
+      const backendFilesList = getInfoToGenerateFiles(FOLDER_API_TEMPLATE, name)
+      await createFilesLayerCommand(
+        template,
+        backendFilesList,
+        `backend ${name}`,
+        FOLDER_API_TEMPLATE,
+        FOLDER_CORE_TEMPLATE
+      )
+    }, delay)
 
     setTimeout(async () => {
       await clearTempFiles()
 
-      // if (await installPackagesCommand(name)) {
-      //   await startGitCommand(name)
-      await openProjectCommand(name)
-      // }
+      if (await installPackagesCommand(name)) {
+        await startGitCommand(name)
+        await openProjectCommand(name)
+      }
 
-      // let integrations = []
+      let integrations = []
 
-      // Object.keys(options).map((command) => {
-      //   integrations.push(command)
-      // })
+      Object.keys(options).map((command) => {
+        integrations.push(command)
+      })
 
-      // const response = await Promise.all(
-      //   integrations.map(async (command) => {
-      //     let res: Array<Response> = []
-      //     switch (command) {
-      //       case FlagsBackend.REPO:
-      //         res.push(await startRepositoryCommand(options.repo))
-      //         break
-      //       case FlagsBackend.TRELLO:
-      //         res.push(await createBoardTrelloCommand('credential'))
-      //         break
-      //       case FlagsBackend.WIKI:
-      //         res.push(await createNotionWikiCommand('credential'))
-      //         break
-      //       case FlagsBackend.BUILD:
-      //         res.push(await buildAppCommand('credential', 'gitRepoUrl'))
-      //         break
-      //       default:
-      //     }
-      //     return res
-      //   })
-      // )
+      const response = await Promise.all(
+        integrations.map(async (command) => {
+          let res: Array<Response> = []
+          switch (command) {
+            case FlagsBackend.REPO:
+              res.push(await startRepositoryCommand(options.repo))
+              break
+            case FlagsBackend.TRELLO:
+              res.push(await createBoardTrelloCommand('credential'))
+              break
+            case FlagsBackend.WIKI:
+              res.push(await createNotionWikiCommand('credential'))
+              break
+            case FlagsBackend.BUILD:
+              res.push(await buildAppCommand('credential', 'gitRepoUrl'))
+              break
+            default:
+          }
+          return res
+        })
+      )
 
-      // printInfoCommands(
-      //   response.map((res) => res[0]),
-      //   Environments.BACKEND
-      // )
-      // printFooter()
-    }, 1000)
+      printInfoCommands(
+        response.map((res) => res[0]),
+        Environments.BACKEND
+      )
+      printFooter()
+    }, delay)
   },
 }

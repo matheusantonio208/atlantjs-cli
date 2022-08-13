@@ -20,6 +20,7 @@
     "sourceMap": false,
     "inlineSourceMap": true,
     "outDir": "build",
+    "typeRoots": ["src/extends/global/variables.d.ts"],
     "strict": false,
     "target": "es5",
     "declaration": true,
