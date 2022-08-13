@@ -1,5 +1,4 @@
 import {
-  createFilesLayerCommand,
   createModuleCommand,
   installPackagesCommand,
 } from '../extends/commands/layers-commands'

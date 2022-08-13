@@ -25,29 +25,31 @@ import {
   createNotionWikiCommand,
 } from '../extends/commands/flags-commands'
 import { Environments, FlagsBackend, Response } from '../extends/types'
+
 module.exports = {
   name: 'create:backend',
   description: 'Create the initial files of the application',
 
   run: async (toolbox) => {
     const { parameters, template } = toolbox
+    const { options } = parameters
+
+    const name: string = parameters.first || '.'
 
     const FOLDER_API_TEMPLATE = 'back-end/api'
     const FOLDER_CORE_TEMPLATE = 'core'
     const delay = 500
 
-    const { options } = parameters
-
-    const name: string = parameters.first || '.'
-
-    const coreFilesList = getInfoToGenerateFiles(FOLDER_CORE_TEMPLATE, name)
-    await createFilesLayerCommand(
-      template,
-      coreFilesList,
-      `core ${name}`,
-      FOLDER_API_TEMPLATE,
-      FOLDER_CORE_TEMPLATE
-    )
+    setTimeout(async () => {
+      const coreFilesList = getInfoToGenerateFiles(FOLDER_CORE_TEMPLATE, name)
+      await createFilesLayerCommand(
+        template,
+        coreFilesList,
+        `core ${name}`,
+        FOLDER_API_TEMPLATE,
+        FOLDER_CORE_TEMPLATE
+      )
+    })
 
     setTimeout(async () => {
       const backendFilesList = getInfoToGenerateFiles(FOLDER_API_TEMPLATE, name)
@@ -62,11 +64,13 @@ module.exports = {
 
     setTimeout(async () => {
       await clearTempFiles()
+      await startGitCommand(name)
+      await openProjectCommand(name)
 
-      if (await installPackagesCommand(name)) {
-        await startGitCommand(name)
-        await openProjectCommand(name)
-      }
+      // if (await installPackagesCommand(name)) {
+      //   await startGitCommand(name)
+      //   await openProjectCommand(name)
+      // }
 
       let integrations = []
 

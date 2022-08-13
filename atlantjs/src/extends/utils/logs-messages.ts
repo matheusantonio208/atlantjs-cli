@@ -56,6 +56,7 @@ export const log = {
   layers: {
     start: 'Creating $layerName files...',
     success: `Files $layerName created successfully!`,
+    conflict: `Files in conflict. Solve them and type "$command" to continue`,
     fail: 'Fail to create files of $layerName',
     info: '',
   },
