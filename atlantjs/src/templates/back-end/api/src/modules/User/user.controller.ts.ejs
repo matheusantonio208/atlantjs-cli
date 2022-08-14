@@ -1,0 +1,94 @@
+import { IRequest, IResponse } from '../../@types';
+
+import {
+  UserToCreateDto,
+  UserCreatingDto,
+  UserCreatedDto,
+  UserToUpdateDto,
+} from './dto/index.dto';
+
+import userRepository from './user.repository';
+
+import userService from './user.service';
+
+class UserController {
+  async store(req: IRequest, res: IResponse) {
+    try {
+      const user: UserToCreateDto = new UserToCreateDto(req.body);
+
+      const { userProperty }: number = await userService.serviceFunction();
+
+      const userCreatingDto: UserCreatingDto = new UserCreatingDto({
+        ...user,
+        user_property: userProperty,
+      });
+
+      await userRepository.create(userCreatingDto);
+
+      return res.status(201);
+    } catch (error) {
+      return res.status(401).json({ error_msg: `Error! ${error}` });
+    }
+  }
+
+  async index(req: IRequest, res: IResponse) {
+    try {
+      const { id } = req.params;
+
+      const user: UserCreatedDto = await userRepository.getOneById(id);
+
+      return res.status(201).json(user);
+    } catch (error) {
+      return res.status(401).json({ error_msg: `Error! ${error}` });
+    }
+  }
+
+  async show(req: IRequest, res: IResponse) {
+    try {
+      const { property, sort, itensPerPage, pagination } = req.query;
+
+      const user: Array<UserCreatedDto> = await userRepository.listAll(
+        property,
+        sort,
+        itensPerPage,
+        pagination,
+      );
+
+      return res.status(201).json(user);
+    } catch (error) {
+      return res.status(401).json({ error_msg: `Error! ${error}` });
+    }
+  }
+
+  async delete(req: IRequest, res: IResponse) {
+    try {
+      const { id } = req.params;
+
+      await userRepository.deleteById(id);
+
+      return res
+        .status(201)
+        .json({ success_msg: `Success! Your user was deleted` });
+    } catch (error) {
+      return res.status(401).json({ error_msg: `Error! ${error}` });
+    }
+  }
+
+  async update(req: IRequest, res: IResponse) {
+    try {
+      const { id } = req.params;
+      const data: UserToUpdateDto = new UserToUpdateDto(req.body);
+
+      await userRepository.updateById(
+        id,
+        data,
+      );
+
+      return res.status(201);
+    } catch (error) {
+      return res.status(401).json({ error_msg: `Error! ${error}` });
+    }
+  }
+}
+
+export default new UserController();

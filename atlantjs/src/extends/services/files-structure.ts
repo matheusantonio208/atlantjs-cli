@@ -1,6 +1,8 @@
 export enum FileName {
   API_CONFIG = 'api-config',
   PACKAGE = 'package',
+  DTO = 'dto',
+  SCHEMA = 'schema'
   // SERVICE = 'service',
   // ENV_EXAMPLE = 'env-example',
   // DOCKER_FILE = 'docker-file',
@@ -56,6 +58,32 @@ export function filesStructure(fileName: string) {
         }
       )
       break
+    }
+    case FileName.DTO: {
+      file.push({
+        name: 'properties',
+        tags: {
+          start: '//! properties-start',
+          end: '//! properties-end'
+        }
+      },
+      {
+        name: 'constructor',
+        tags: {
+          start: '//! constructor-start',
+          end: '//! constructor-end'
+        }
+      })
+      break
+    }
+    case FileName.SCHEMA: {
+      file.push({
+        name: 'properties',
+        tags: {
+          start: '//! properties-start',
+          end: '//! properties-end'
+        }
+      })
     }
   }
 

@@ -42,7 +42,6 @@ export async function createModuleCommand(
   templateToolbox,
   infoFilesList,
   name,
-  entityPath
 ) {
   let spinner = ora(
     log.module.start.replace('$moduleName', chalk.bold.italic.gray(name))
@@ -50,7 +49,7 @@ export async function createModuleCommand(
 
   try {
     await createFiles(templateToolbox, infoFilesList, 'USER', name)
-    await createEntity(entityPath)
+    await createEntity(name)
 
     spinner.stop()
     ora(

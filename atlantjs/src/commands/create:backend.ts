@@ -5,6 +5,7 @@
 import {
   getInfoToGenerateFiles,
   clearTempFiles,
+  verifyConflicts,
 } from '../extends/services/file-service'
 import {
   installPackagesCommand,
@@ -18,6 +19,7 @@ import {
 import {
   startGitCommand,
   startRepositoryCommand,
+  verifyConflictCommands,
 } from '../extends/commands/git-commands'
 import {
   buildAppCommand,
@@ -39,6 +41,7 @@ module.exports = {
     const FOLDER_API_TEMPLATE = 'back-end/api'
     const FOLDER_CORE_TEMPLATE = 'core'
     const delay = 500
+    let inConflict: boolean
 
     setTimeout(async () => {
       const coreFilesList = getInfoToGenerateFiles(FOLDER_CORE_TEMPLATE, name)
@@ -46,10 +49,14 @@ module.exports = {
         template,
         coreFilesList,
         `core ${name}`,
-        FOLDER_API_TEMPLATE,
-        FOLDER_CORE_TEMPLATE
+        FOLDER_CORE_TEMPLATE,
+        FOLDER_API_TEMPLATE
       )
     })
+
+    setTimeout(async () => {
+      await startGitCommand(name)
+    }, delay)
 
     setTimeout(async () => {
       const backendFilesList = getInfoToGenerateFiles(FOLDER_API_TEMPLATE, name)
@@ -57,30 +64,29 @@ module.exports = {
         template,
         backendFilesList,
         `backend ${name}`,
-        FOLDER_API_TEMPLATE,
-        FOLDER_CORE_TEMPLATE
+        FOLDER_CORE_TEMPLATE,
+        FOLDER_API_TEMPLATE
       )
-    }, delay)
+    }, delay * 2)
 
     setTimeout(async () => {
       await clearTempFiles()
-      await startGitCommand(name)
       await openProjectCommand(name)
+      inConflict = await verifyConflictCommands(afterResolveConflict, name)
+    }, delay * 3)
 
-      // if (await installPackagesCommand(name)) {
-      //   await startGitCommand(name)
-      //   await openProjectCommand(name)
-      // }
+    async function afterResolveConflict() {
+      await installPackagesCommand(name)
 
       let integrations = []
 
       Object.keys(options).map((command) => {
         integrations.push(command)
       })
+      let res: Array<Response> = []
 
       const response = await Promise.all(
         integrations.map(async (command) => {
-          let res: Array<Response> = []
           switch (command) {
             case FlagsBackend.REPO:
               res.push(await startRepositoryCommand(options.repo))
@@ -105,6 +111,6 @@ module.exports = {
         Environments.BACKEND
       )
       printFooter()
-    }, delay)
+    }
   },
 }

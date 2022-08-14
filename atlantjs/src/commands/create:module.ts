@@ -34,16 +34,15 @@ module.exports = {
       template,
       moduleFilesList,
       `module ${name}`,
-      '/oath'
     )
 
     setTimeout(async () => {
       await clearTempFiles()
 
-      if (await installPackagesCommand('.')) {
-        await createCommitCommand(`feat: creates module ${name}`)
-      }
-      printFooter()
+      // if (await installPackagesCommand()) {
+      //   await createCommitCommand(`feat: creates module ${name}`)
+      // }
+      // printFooter()
     }, 1000)
   },
 }

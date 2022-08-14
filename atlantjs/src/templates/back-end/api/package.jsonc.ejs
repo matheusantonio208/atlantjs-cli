@@ -1,8 +1,10 @@
 {
   "scripts": {
+    //! scripts-start
     "start": "node dist/config/server/server-connect.js",
     "dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --ignore-watch node_modules --no-notify src/config/server/server-connect.js",
     "dev:debug": "ts-node-dev --inspect -r tsconfig-paths/register --respawn --transpile-only --ignore-watch node_modules --no-notify src/config/server/server-connect.js"
+    //! scripts-end
   },
   "dependencies": {
     //! dependencies-start

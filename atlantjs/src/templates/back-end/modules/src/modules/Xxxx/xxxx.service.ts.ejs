@@ -1,8 +1,13 @@
 class <%= props.moduleNameUpper %>Service {
-  // Services Functions
+// services-start
   serviceFunction() {
-    return 1;
+    const greetings = 'Hi! I am a'
+    const service = `<%= props.moduleNameUpper %>`
+
+    console.log(`${greetings} ${service}`);
+
+    return {<%= props.moduleNameUpper %>Property: `${greetings} ${service}`}
   }
 }
-
+// services-end
 export default new <%= props.moduleNameUpper %>Service();

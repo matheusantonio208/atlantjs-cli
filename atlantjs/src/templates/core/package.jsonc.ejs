@@ -5,13 +5,15 @@
   "repository": "https://github.com/matheusantonio208/oracule-api",
   "license": "MIT",
   "scripts": {
+    //! scripts-start
     "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",
     "test": "jest --detectOpenHandles",
-    "lint": "eslint . --ext .ts,.js"
+    "lint": "eslint . --ext .ts,.js",
+    //! scripts-end
   },
   "dependencies": {
     //! dependencies-start
-    "dotenv": "^8.2.0"
+    "dotenv": "^8.2.0",
     //! dependencies-end
   },
   "devDependencies": {
@@ -47,7 +49,7 @@
     "ts-jest": "^28.0.3",
     "ts-node-dev": "^2.0.0",
     "tsconfig-paths": "^4.0.0",
-    "typescript": "^4.7.2"
+    "typescript": "^4.7.2",
     //! devDependencies-end
   },
   "husky": {

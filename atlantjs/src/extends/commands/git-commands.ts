@@ -2,10 +2,11 @@ import { system } from 'gluegun'
 import ora = require('ora')
 import { Response } from '../types'
 import { log } from '../utils/logs-messages'
+import { prompt } from 'enquirer'
+import { verifyConflicts } from '../services/file-service'
 
 export async function startGitCommand(dirProject?): Promise<Response> {
   const spinner = ora(log.git.start).start()
-
   try {
     await system.run(
       `cd ${
@@ -16,7 +17,7 @@ export async function startGitCommand(dirProject?): Promise<Response> {
 
     ora(log.git.success).succeed()
   } catch (error) {
-    spinner.fail(log.git.fail)
+    spinner.fail(log.git.fail + error)
   }
   return { infoText: log.git.info }
 }
@@ -47,4 +48,23 @@ export async function startRepositoryCommand(repoUrl): Promise<Response> {
     spinner.fail(log.repository.fail)
   }
   return { infoText: log.repository.info }
+}
+
+export async function verifyConflictCommands(callback, dirProject?) {
+  try {
+    let inConflict = await verifyConflicts(dirProject ?? '.')
+
+    if (inConflict) {
+      const response = await prompt({
+        type: 'confirm',
+        name: 'inConflict',
+        message: 'Corrected conflicts?',
+      }).then(callback)
+
+      inConflict = !response
+      return inConflict
+    }
+  } catch (error) {
+    console.log(error)
+  }
 }

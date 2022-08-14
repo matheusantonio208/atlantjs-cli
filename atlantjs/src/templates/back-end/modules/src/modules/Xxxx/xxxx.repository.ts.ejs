@@ -11,15 +11,17 @@ class <%= props.moduleNameUpper %>Repository {
   async create(<%= props.moduleNameLower %>: <%= props.moduleNameUpper %>CreatingDto): Promise<<%= props.moduleNameUpper %>CreatedDto> {
     const <%= props.moduleNameLower %>Create = new <%= props.moduleNameUpper %>(<%= props.moduleNameLower %>);
 
-    if (await <%= props.moduleNameLower %>Create.save()) {
-      return <%= props.moduleNameLower %>Create;
+    try {
+      await <%= props.moduleNameLower %>Create.save()
+    } catch {
+      throw new Error(`Error to create <%= props.moduleNameLower %>`);
     }
-
-    throw new Error(`Error to create <%= props.moduleNameLower %>`);
   }
 
   async getOneById(id: Schema.Types.ObjectId): Promise<<%= props.moduleNameUpper %>CreatedDto> {
+
     const <%= props.moduleNameLower %>: <%= props.moduleNameUpper %>CreatedDto = await <%= props.moduleNameUpper %>.findById(id);
+
     if (<%= props.moduleNameLower %>) return <%= props.moduleNameLower %>;
 
     throw new Error(`Error to get <%= props.moduleNameLower %>`);
@@ -49,24 +51,21 @@ class <%= props.moduleNameUpper %>Repository {
     id: Schema.Types.ObjectId,
     data: <%= props.moduleNameUpper %>ToUpdateDto,
   ): Promise<<%= props.moduleNameUpper %>CreatedDto> {
-    const updated<%= props.moduleNameUpper %>: <%= props.moduleNameUpper %>CreatedDto = await <%= props.moduleNameUpper %>.findByIdAndUpdate(
-      id,
-      data,
-      (error, document) => {
-        if (!error) return document;
-        throw error;
-      },
-    );
 
-    if (updated<%= props.moduleNameUpper %>) return updated<%= props.moduleNameUpper %>;
-
-    throw new Error(`Error to update <%= props.moduleNameLower %>`);
+    try {
+      await <%= props.moduleNameUpper %>.findByIdAndUpdate(id, data);
+    } catch {
+      throw new Error(`Error to update <%= props.moduleNameLower %>`);
+    }
   }
 
   async deleteById(id: Schema.Types.ObjectId): Promise<Boolean> {
-    if (await <%= props.moduleNameUpper %>.deleteOne({ _id: id })) return true;
-
-    throw new Error(`Error to delete <%= props.moduleNameLower %>`);
+    try {
+      await <%= props.moduleNameUpper %>.deleteOne({ _id: id })
+      return true;
+    } catch {
+      throw new Error(`Error to delete <%= props.moduleNameLower %>`);
+    }
   }
 }
 

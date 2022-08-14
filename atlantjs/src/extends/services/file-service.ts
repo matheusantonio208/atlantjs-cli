@@ -11,6 +11,7 @@ import * as rimraf from 'rimraf'
 import { FileName } from './files-structure'
 import { lowerFirstLetter, upperFirstLetter } from '../utils'
 import { mergeFiles } from './merge-service'
+import simpleGit from 'simple-git'
 
 function getPathsTemplate(templateName: string, arrayOfFiles?) {
   const PATH_TEMPLATE = resolve(
@@ -156,12 +157,149 @@ export async function createFiles(
   })
 }
 
-export async function createEntity(entityPath) {
-  console.log(entityPath)
+export async function createEntity(nameEntity) {
+  const PATH_ENTITY_FILE = resolve(
+    '.dev',
+    'entities',
+    `${nameEntity}.entity.ts`
+  )
+  const PATH_DTO_FILE = resolve(
+    'src',
+    'modules',
+    upperFirstLetter(nameEntity),
+    'dto'
+  )
+  const PATH_SCHEMA_FILE = resolve('src', 'schemas')
+
+  const dtoFiles = readdirSync(PATH_DTO_FILE)
+
+  const { userEntity } = require(PATH_ENTITY_FILE)
+
+  const properties = Object.keys(userEntity)
+  let schemaPropertiesFile = []
+  let dtoPropertiesFile = []
+  let dtoConstructorFile = []
+
+  properties.map((property) => {
+    const type = userEntity[property].type
+    const require = userEntity[property].required ?? false
+    const unique = userEntity[property].unique ?? false
+
+    Object.keys(userEntity[property]).map((subProperty) => {
+      switch (subProperty) {
+        case 'required':
+        case 'unique':
+        case 'type':
+        case 'default':
+        case 'enum':
+          break
+        default:
+          console.log(userEntity[property])
+          break
+      }
+    })
+
+    schemaPropertiesFile.push(`    ${[property]}: {
+      type: ${upperFirstLetter(type.toString())},
+      unique: ${unique},
+      require: ${require}
+    },`)
+
+    dtoPropertiesFile.push(`  ${property}: ${type};`)
+
+    dtoConstructorFile.push(`    this.${property} = body?.${property};`)
+  })
+
+  const schemaFile = [
+    '//! properties-start',
+    ...schemaPropertiesFile,
+    '//! properties-end',
+  ]
+
+  const dtoFile = [
+    '//! properties-start',
+    ...dtoPropertiesFile,
+    '//! properties-end',
+    '//! constructor-start',
+    ...dtoConstructorFile,
+    '//! constructor-end',
+  ]
+
+  dtoFiles.map(async (file) => {
+    const fileInString = parseArray(`${PATH_DTO_FILE}/${file}`)
+    const dtoFileMergedString = await mergeFiles(
+      'dto',
+      dtoFile,
+      fileInString,
+      'WITHOUT',
+      'WITH'
+    )
+    await save(resolve(`${PATH_DTO_FILE}/${file}`), dtoFileMergedString)
+  })
+
+  const fileSchemaInString = parseArray(
+    `${PATH_SCHEMA_FILE}/${upperFirstLetter(nameEntity)}.schema.ts`
+  )
+  const schemaFileMergedString = await mergeFiles(
+    'schema',
+    schemaFile,
+    fileSchemaInString,
+    'WITHOUT',
+    'WITH'
+  )
+  await save(
+    resolve(`${PATH_SCHEMA_FILE}/${upperFirstLetter(nameEntity)}.schema.ts`),
+    schemaFileMergedString
+  )
+}
+
+export async function verifyConflicts(name) {
+  const git = simpleGit(name)
+
+  try {
+    const status = await git.status()
+    const files = status.files
+
+    let filesInConflict = []
+
+    files.map((file) => {
+      const pathFile = file.path
+      let fileContent
+      switch (file.working_dir) {
+        case 'M':
+        case 'U':
+          {
+            fileContent = parseArray(`./${name}/${pathFile}`)
+
+            fileContent.map((content) => {
+              if (content.trim().startsWith('<<<<<<<')) {
+                filesInConflict.push(file.path)
+              }
+            })
+
+            const hasConflictTagInNameFile =
+              pathFile.indexOf('- [CONFLICT]') !== -1
+
+            if (hasConflictTagInNameFile) {
+              filesInConflict.push(file.path)
+            }
+          }
+          break
+        default:
+          break
+      }
+    })
+
+    return filesInConflict.length > 0
+  } catch (error) {
+    console.debug(error)
+  }
 }
 
 function parseArray(filePath: string) {
-  const content = readFileSync(filePath).toString()
+  const path = resolve(filePath)
+
+  const content = readFileSync(path).toString()
 
   const contentArray = content.split('\n')
 

@@ -9,29 +9,25 @@ import {
 
 import <%= props.moduleNameLower %>Repository from './<%= props.moduleNameLower %>.repository';
 
-// import <%= props.moduleNameLower %>Service from './<%= props.moduleNameLower %>.service';
+import <%= props.moduleNameLower %>Service from './<%= props.moduleNameLower %>.service';
 
 class <%= props.moduleNameUpper %>Controller {
   async store(req: IRequest, res: IResponse) {
     try {
-      // === Get Vars === //
       const <%= props.moduleNameLower %>: <%= props.moduleNameUpper %>ToCreateDto = new <%= props.moduleNameUpper %>ToCreateDto(req.body);
 
-      // === Generate Vars === //
-      // const <%= props.moduleNameLower %>Property: number = await <%= props.moduleNameLower %>Service.serviceFunction();
+      const <%= props.moduleNameLower %>Property = await <%= props.moduleNameLower %>Service.serviceFunction();
 
-      // === Create Dto === //
       const <%= props.moduleNameLower %>CreatingDto: <%= props.moduleNameUpper %>CreatingDto = new <%= props.moduleNameUpper %>CreatingDto({
         ...<%= props.moduleNameLower %>,
-        // <%= props.moduleNameLower %>_property: <%= props.moduleNameLower %>Property,
+        <%= props.moduleNameLower %>_property: <%= props.moduleNameLower %>Property,
       });
 
-      // === Create Object === //
       const <%= props.moduleNameLower %>Created: <%= props.moduleNameUpper %>CreatedDto = await <%= props.moduleNameLower %>Repository.create(
         <%= props.moduleNameLower %>CreatingDto,
       );
 
-      return res.status(201).json(<%= props.moduleNameLower %>Created);
+      return res.status(201)
     } catch (error) {
       return res.status(401).json({ error_msg: `Error! ${error}` });
     }
@@ -73,8 +69,7 @@ class <%= props.moduleNameUpper %>Controller {
       await <%= props.moduleNameLower %>Repository.deleteById(id);
 
       return res
-        .status(201)
-        .json({ success_msg: `Success! Your <%= props.moduleNameLower %> was deleted` });
+        .status(201);
     } catch (error) {
       return res.status(401).json({ error_msg: `Error! ${error}` });
     }
@@ -85,10 +80,8 @@ class <%= props.moduleNameUpper %>Controller {
       const { id } = req.params;
       const data: <%= props.moduleNameUpper %>ToUpdateDto = new <%= props.moduleNameUpper %>ToUpdateDto(req.body);
 
-      const <%= props.moduleNameLower %>Updated: <%= props.moduleNameUpper %>CreatedDto = await <%= props.moduleNameLower %>Repository.updateById(
-        id,
-        data,
-      );
+      const <%= props.moduleNameLower %>Updated: <%= props.moduleNameUpper %>CreatedDto =
+        await <%= props.moduleNameLower %>Repository.updateById(id, data);
 
       return res.status(201).json(<%= props.moduleNameLower %>Updated);
     } catch (error) {
