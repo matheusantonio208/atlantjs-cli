@@ -5,7 +5,6 @@
 import {
   getInfoToGenerateFiles,
   clearTempFiles,
-  verifyConflicts,
 } from '../extends/services/file-service'
 import {
   installPackagesCommand,
@@ -41,7 +40,6 @@ module.exports = {
     const FOLDER_API_TEMPLATE = 'back-end/api'
     const FOLDER_CORE_TEMPLATE = 'core'
     const delay = 500
-    let inConflict: boolean
 
     setTimeout(async () => {
       const coreFilesList = getInfoToGenerateFiles(FOLDER_CORE_TEMPLATE, name)
@@ -72,7 +70,7 @@ module.exports = {
     setTimeout(async () => {
       await clearTempFiles()
       await openProjectCommand(name)
-      inConflict = await verifyConflictCommands(afterResolveConflict, name)
+      await verifyConflictCommands(afterResolveConflict, name)
     }, delay * 3)
 
     async function afterResolveConflict() {

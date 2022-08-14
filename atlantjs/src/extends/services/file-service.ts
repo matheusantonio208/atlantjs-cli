@@ -290,10 +290,17 @@ export async function verifyConflicts(name) {
       }
     })
 
-    return filesInConflict.length > 0
+    return {
+      files: removeDuplicates(filesInConflict),
+      inConflict: filesInConflict.length > 0,
+    }
   } catch (error) {
     console.debug(error)
   }
+}
+
+function removeDuplicates(data) {
+  return data.filter((value, index) => data.indexOf(value) === index)
 }
 
 function parseArray(filePath: string) {

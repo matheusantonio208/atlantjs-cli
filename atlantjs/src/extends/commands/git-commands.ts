@@ -52,9 +52,10 @@ export async function startRepositoryCommand(repoUrl): Promise<Response> {
 
 export async function verifyConflictCommands(callback, dirProject?) {
   try {
-    let inConflict = await verifyConflicts(dirProject ?? '.')
+    let { files, inConflict } = await verifyConflicts(dirProject ?? '.')
 
     if (inConflict) {
+      ora(`You have files to be merged: ${files}`).warn()
       const response = await prompt({
         type: 'confirm',
         name: 'inConflict',

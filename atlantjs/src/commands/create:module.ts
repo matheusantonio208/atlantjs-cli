@@ -30,19 +30,15 @@ module.exports = {
       moduleNameLower,
     })
 
-    await createModuleCommand(
-      template,
-      moduleFilesList,
-      `module ${name}`,
-    )
+    await createModuleCommand(template, moduleFilesList, `module ${name}`)
 
     setTimeout(async () => {
       await clearTempFiles()
 
-      // if (await installPackagesCommand()) {
-      //   await createCommitCommand(`feat: creates module ${name}`)
-      // }
-      // printFooter()
+      if (await installPackagesCommand()) {
+        await createCommitCommand(`feat: creates module ${name}`)
+      }
+      printFooter()
     }, 1000)
   },
 }
