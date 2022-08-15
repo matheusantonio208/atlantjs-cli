@@ -46,24 +46,24 @@ export function mergeFiles(
 
 function mergeSection(
   section,
-  sectionUser,
-  sectionWithChangesCli,
   moduleA,
-  moduleB
+  moduleB,
+  nameModuleA,
+  nameModuleB
 ) {
-  let inConflict = !(sectionUser.join() === sectionWithChangesCli.join())
+  let inConflict = !(moduleA.join() === moduleB.join())
   let sectionMerged = []
 
   if (inConflict) {
     sectionMerged = [
-      `<<<<<<< ${moduleA} ==> ${section}`,
-      ...sectionUser,
+      `<<<<<<< ${nameModuleA} ==> ${section}`,
+      ...moduleA,
       `=======`,
-      ...sectionWithChangesCli,
-      `>>>>>>> ${moduleB} ==> ${section}`,
+      ...moduleB,
+      `>>>>>>> ${nameModuleB} ==> ${section}`,
     ]
   } else {
-    sectionMerged = [...sectionUser]
+    sectionMerged = [...moduleA]
   }
 
   return sectionMerged
@@ -116,16 +116,25 @@ export function getContentSection(file, section, tags) {
 }
 
 function getRangeSection(file, tags) {
-  let startLine
-  let endLine
+  let startLineArray = []
+  let endLineArray = []
   const { start, end } = tags
 
   file.map((content, line) => {
     if (content.trim().startsWith(start.trim())) {
-      startLine = line
-    } else if (content.trim().startsWith(end.trim())) {
-      endLine = line
+      startLineArray.push(line)
     }
+  })
+
+  file.map((content, line) => {
+    if(content.trim().startsWith(end.trim())) {
+      endLineArray.push(line)
+    }
+  })
+
+  const startLine = startLineArray[0]
+  const endLine = endLineArray.find(line => {
+    return line > startLine
   })
 
   const amountLines = endLine - startLine

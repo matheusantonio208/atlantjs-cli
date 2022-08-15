@@ -1,19 +1,19 @@
 
 export class UserToUpdateDto {
   //! properties-start
-  first_name: string;
-  last_name: string;
-  email: string;
-  password_hash: string;
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  password_hash?: string;
   photo_profile?: string;
   date_birth?: string;
   phone_number?: string;
   country?: string;
-  state: string;
-  group: string;
+  state?: string;
+  group?: string;
   date_last_login?: string;
   locale_last_login?: string;
-  account_status: string;
+  account_status?: string;
   //! properties-end
 
   constructor(body: UserToUpdateDto) {

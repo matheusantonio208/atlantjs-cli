@@ -1,7 +1,3 @@
-/*
- * Escrever comits realizados após a criação de uma layer ou módulo, abstraindo cada implementação em pequenas tarefas (separar tests e feats)
- */
-
 import {
   getInfoToGenerateFiles,
   clearTempFiles,
@@ -20,12 +16,8 @@ import {
   startRepositoryCommand,
   verifyConflictCommands,
 } from '../extends/commands/git-commands'
-import {
-  buildAppCommand,
-  createBoardTrelloCommand,
-  createNotionWikiCommand,
-} from '../extends/commands/flags-commands'
 import { Environments, FlagsBackend, Response } from '../extends/types'
+import { upperCaseWord } from '../extends/utils'
 
 module.exports = {
   name: 'create:backend',
@@ -41,7 +33,7 @@ module.exports = {
     const FOLDER_CORE_TEMPLATE = 'core'
     const delay = 500
 
-    const coreFilesList = getInfoToGenerateFiles(FOLDER_CORE_TEMPLATE, name)
+    const coreFilesList = getInfoToGenerateFiles(FOLDER_CORE_TEMPLATE, name, {name})
     await createFilesLayerCommand(
       template,
       coreFilesList,
@@ -60,8 +52,8 @@ module.exports = {
         template,
         backendFilesList,
         `backend ${name}`,
-        FOLDER_CORE_TEMPLATE,
-        FOLDER_API_TEMPLATE
+        upperCaseWord(FOLDER_CORE_TEMPLATE),
+        upperCaseWord(FOLDER_API_TEMPLATE)
       )
     }, delay * 2)
 
@@ -87,15 +79,6 @@ module.exports = {
             case FlagsBackend.REPO:
               res.push(await startRepositoryCommand(options.repo))
               break
-            case FlagsBackend.TRELLO:
-              res.push(await createBoardTrelloCommand('credential'))
-              break
-            case FlagsBackend.WIKI:
-              res.push(await createNotionWikiCommand('credential'))
-              break
-            case FlagsBackend.BUILD:
-              res.push(await buildAppCommand('credential', 'gitRepoUrl'))
-              break
             default:
           }
           return res
@@ -107,6 +90,7 @@ module.exports = {
         Environments.BACKEND
       )
       printFooter()
+
     }
   },
 }

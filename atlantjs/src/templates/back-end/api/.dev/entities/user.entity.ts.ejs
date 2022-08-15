@@ -1,9 +1,9 @@
-export const userEntity = {
-  first_name: {
+export const entity = {
+  firstName: {
     type: 'string',
     required: true,
   },
-  last_name: {
+  lastName: {
     type: 'string',
     required: true,
   },
@@ -12,17 +12,17 @@ export const userEntity = {
     required: true,
     unique: true,
   },
-  password_hash: {
+  passwordHash: {
     type: 'string',
     required: true,
   },
-  photo_profile: {
+  photoProfile: {
     type: 'string',
   },
-  date_birth: {
+  dateBirth: {
     type: Date,
   },
-  phone_number: {
+  phoneNumber: {
     type: 'string',
     required: true,
     unique: true,
@@ -40,13 +40,13 @@ export const userEntity = {
     required: true,
     enum: ['admin', 'pro-plan', 'free-plan'],
   },
-  date_last_login: {
+  dateLastLogin: {
     type: 'string',
   },
-  locale_last_login: {
+  localeLastLogin: {
     type: 'string',
   },
-  account_status: {
+  accountStatus: {
     type: 'string',
     required: true,
     enum: ['active', 'disabled', 'waiting_deleted'],

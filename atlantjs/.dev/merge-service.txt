@@ -1,3 +1,14 @@
+BUILD
+TESTE
+SWAGGER
+
+
+
+
+
+
+
+
 import { filesStructure } from './files-structure'
 export function mergeFiles(fileTempJson, fileUserJson, fileName: string) {
   const { sectionsUser, sectionsTemp } = getAllInfoJsonSection(

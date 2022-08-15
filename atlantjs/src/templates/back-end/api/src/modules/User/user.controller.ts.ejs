@@ -16,7 +16,7 @@ class UserController {
     try {
       const user: UserToCreateDto = new UserToCreateDto(req.body);
 
-      const { userProperty }: number = await userService.serviceFunction();
+      const { userProperty } = await userService.serviceFunction();
 
       const userCreatingDto: UserCreatingDto = new UserCreatingDto({
         ...user,

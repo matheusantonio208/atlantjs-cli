@@ -69,11 +69,7 @@ export function getInfoToGenerateFiles(
   return listFiles
 }
 
-export function getListModuleInfo(
-  name: string,
-  props,
-  entityJsonPaths?: string
-) {
+export function getListModuleInfo(name: string, props) {
   const PATH_MODULE_FILES = 'back-end/modules'
 
   const files = getPathsTemplate(PATH_MODULE_FILES)
@@ -205,7 +201,7 @@ export async function createEntity(nameEntity) {
       require: ${require}
     },`)
 
-    dtoPropertiesFile.push(`  ${property}: ${type};`)
+    dtoPropertiesFile.push(`  ${property}${require ? '' : '?'}: ${type};`)
 
     dtoConstructorFile.push(`    this.${property} = body?.${property};`)
   })

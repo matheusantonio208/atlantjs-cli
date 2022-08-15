@@ -38,22 +38,22 @@ export function filesStructure(fileName: string) {
         {
           name: 'dependencies',
           tags: {
-            start: '//! dependencies-start',
-            end: '//! dependencies-end',
+            start: '"dependencies": {',
+            end: '}',
           },
         },
         {
           name: 'scripts',
           tags: {
-            start: '//! scripts-start',
-            end: '//! scripts-end',
+            start: '"scripts": {',
+            end: '}',
           },
         },
         {
           name: 'devDependencies',
           tags: {
-            start: '//! devDependencies-start',
-            end: '//! devDependencies-end',
+            start: '"devDependencies": {',
+            end: '}',
           },
         }
       )

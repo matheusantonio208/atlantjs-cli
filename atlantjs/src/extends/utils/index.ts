@@ -10,6 +10,12 @@ export function lowerFirstLetter(str) {
   return lowered
 }
 
+export function upperCaseWord(str) {
+  const word = str.toUpperCase()
+
+  return word
+}
+
 export function removeDuplicates(data) {
   return data.filter((value, index) => data.indexOf(value) === index)
 }
