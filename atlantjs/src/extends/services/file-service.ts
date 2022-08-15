@@ -9,7 +9,7 @@ import {
 } from 'fs'
 import * as rimraf from 'rimraf'
 import { FileName } from './files-structure'
-import { lowerFirstLetter, upperFirstLetter } from '../utils'
+import { lowerFirstLetter, removeDuplicates, upperFirstLetter } from '../utils'
 import { mergeFiles } from './merge-service'
 import simpleGit from 'simple-git'
 
@@ -297,10 +297,6 @@ export async function verifyConflicts(name) {
   } catch (error) {
     console.debug(error)
   }
-}
-
-function removeDuplicates(data) {
-  return data.filter((value, index) => data.indexOf(value) === index)
 }
 
 function parseArray(filePath: string) {

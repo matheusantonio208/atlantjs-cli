@@ -9,3 +9,7 @@ export function lowerFirstLetter(str) {
 
   return lowered
 }
+
+export function removeDuplicates(data) {
+  return data.filter((value, index) => data.indexOf(value) === index)
+}

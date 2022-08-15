@@ -4,6 +4,7 @@ import { Response } from '../types'
 import { log } from '../utils/logs-messages'
 import { prompt } from 'enquirer'
 import { verifyConflicts } from '../services/file-service'
+import chalk = require('chalk')
 
 export async function startGitCommand(dirProject?): Promise<Response> {
   const spinner = ora(log.git.start).start()
@@ -55,7 +56,9 @@ export async function verifyConflictCommands(callback, dirProject?) {
     let { files, inConflict } = await verifyConflicts(dirProject ?? '.')
 
     if (inConflict) {
-      ora(`You have files to be merged: ${files}`).warn()
+      ora(
+        `You have files to be merged: ${chalk.italic.cyan(`/${files}`)}`
+      ).warn()
       const response = await prompt({
         type: 'confirm',
         name: 'inConflict',

@@ -41,16 +41,14 @@ module.exports = {
     const FOLDER_CORE_TEMPLATE = 'core'
     const delay = 500
 
-    setTimeout(async () => {
-      const coreFilesList = getInfoToGenerateFiles(FOLDER_CORE_TEMPLATE, name)
-      await createFilesLayerCommand(
-        template,
-        coreFilesList,
-        `core ${name}`,
-        FOLDER_CORE_TEMPLATE,
-        FOLDER_API_TEMPLATE
-      )
-    })
+    const coreFilesList = getInfoToGenerateFiles(FOLDER_CORE_TEMPLATE, name)
+    await createFilesLayerCommand(
+      template,
+      coreFilesList,
+      `core ${name}`,
+      FOLDER_CORE_TEMPLATE,
+      FOLDER_API_TEMPLATE
+    )
 
     setTimeout(async () => {
       await startGitCommand(name)

@@ -41,7 +41,7 @@ export async function createFilesLayerCommand(
 export async function createModuleCommand(
   templateToolbox,
   infoFilesList,
-  name,
+  name
 ) {
   let spinner = ora(
     log.module.start.replace('$moduleName', chalk.bold.italic.gray(name))
@@ -66,7 +66,7 @@ export async function installPackagesCommand(dirProject?) {
   const spinner = ora(log.dependencies.start).start()
 
   try {
-    await system.run(`cd ${dirProject || '.'} yarn`)
+    await system.run(`cd ${dirProject || '.'} && yarn`)
 
     spinner.stop()
     ora(log.dependencies.success).succeed()
