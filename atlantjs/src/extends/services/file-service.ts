@@ -170,6 +170,7 @@ export async function createEntity(nameEntity) {
   const PATH_SWAGGER_FILE = resolve('.')
 
   const dtoFiles = readdirSync(PATH_DTO_FILE)
+  const swaggerFile = readdirSync(PATH_SWAGGER_FILE)
 
   const { entity } = require(PATH_ENTITY_FILE)
 
