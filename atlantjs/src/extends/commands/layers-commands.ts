@@ -44,21 +44,28 @@ export async function createModuleCommand(
   name
 ) {
   let spinner = ora(
-    log.module.start.replace('$moduleName', chalk.bold.italic.gray(name))
+    log.module.start.replace('$moduleName', chalk.bold.italic.gray(`module ${name}`))
   ).start()
 
   try {
     await createFiles(templateToolbox, infoFilesList, 'USER', name)
-    await createEntity(name)
 
     spinner.stop()
     ora(
-      log.module.success.replace('$moduleName', chalk.bold.italic.gray(name))
+      log.module.success.replace('$moduleName', chalk.bold.italic.gray(`module ${name}`))
     ).succeed()
   } catch (error) {
     spinner.fail(
-      log.module.fail.replace('$moduleName', chalk.bold.italic.gray(name))
+      log.module.fail.replace('$moduleName', chalk.bold.italic.gray(`module ${name}`))
     )
+  }
+}
+
+export async function createEntityModule(name) {
+  try {
+    await createEntity(name)
+  } catch (error) {
+    throw error
   }
 }
 

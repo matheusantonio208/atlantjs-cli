@@ -2,7 +2,8 @@ export enum FileName {
   API_CONFIG = 'api-config',
   PACKAGE = 'package',
   DTO = 'dto',
-  SCHEMA = 'schema'
+  SCHEMA = 'schema',
+  SWAGGER = 'swagger'
   // SERVICE = 'service',
   // ENV_EXAMPLE = 'env-example',
   // DOCKER_FILE = 'docker-file',
@@ -84,6 +85,25 @@ export function filesStructure(fileName: string) {
           end: '//! properties-end'
         }
       })
+    }
+    case FileName.SWAGGER: {
+      file.push(
+        {
+          name: 'paths',
+          tags: {
+            start: '"paths": {',
+            end: '}',
+          },
+        },
+        {
+          name: 'schemas',
+          tags: {
+            start: ' "schemas": {',
+            end: '}',
+          },
+        }
+      )
+      break
     }
   }
 

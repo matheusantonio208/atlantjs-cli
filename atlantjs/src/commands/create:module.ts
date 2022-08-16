@@ -1,4 +1,5 @@
 import {
+  createEntityModule,
   createModuleCommand,
   installPackagesCommand,
 } from '../extends/commands/layers-commands'
@@ -30,9 +31,10 @@ module.exports = {
       moduleNameLower,
     })
 
-    await createModuleCommand(template, moduleFilesList, `module ${name}`)
+    await createModuleCommand(template, moduleFilesList, name)
 
     setTimeout(async () => {
+      await createEntityModule(name)
       await clearTempFiles()
 
       if (await installPackagesCommand()) {

@@ -56,11 +56,11 @@ function mergeSection(
 
   if (inConflict) {
     sectionMerged = [
-      `<<<<<<< ${nameModuleA} ==> ${section}`,
-      ...moduleA,
-      `=======`,
+      `<<<<<<< ${nameModuleB} ==> ${section}`,
       ...moduleB,
-      `>>>>>>> ${nameModuleB} ==> ${section}`,
+      `=======`,
+      ...moduleA,
+      `>>>>>>> ${nameModuleA} ==> ${section}`,
     ]
   } else {
     sectionMerged = [...moduleA]

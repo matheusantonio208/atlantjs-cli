@@ -159,6 +159,7 @@ export async function createEntity(nameEntity) {
     'entities',
     `${nameEntity}.entity.ts`
   )
+
   const PATH_DTO_FILE = resolve(
     'src',
     'modules',
@@ -166,22 +167,25 @@ export async function createEntity(nameEntity) {
     'dto'
   )
   const PATH_SCHEMA_FILE = resolve('src', 'schemas')
+  const PATH_SWAGGER_FILE = resolve('.')
 
   const dtoFiles = readdirSync(PATH_DTO_FILE)
 
-  const { userEntity } = require(PATH_ENTITY_FILE)
+  const { entity } = require(PATH_ENTITY_FILE)
 
-  const properties = Object.keys(userEntity)
+  const properties = Object.keys(entity)
   let schemaPropertiesFile = []
   let dtoPropertiesFile = []
   let dtoConstructorFile = []
 
   properties.map((property) => {
-    const type = userEntity[property].type
-    const require = userEntity[property].required ?? false
-    const unique = userEntity[property].unique ?? false
+    const type = entity[property].type
+    const require = entity[property].required ?? false
+    const unique = entity[property].unique ?? false
+    const enumArray = entity[property].enum ?? false
+    const defaultProperty = entity[property].default ?? false
 
-    Object.keys(userEntity[property]).map((subProperty) => {
+    Object.keys(entity[property]).map((subProperty) => {
       switch (subProperty) {
         case 'required':
         case 'unique':
@@ -190,13 +194,13 @@ export async function createEntity(nameEntity) {
         case 'enum':
           break
         default:
-          console.log(userEntity[property])
+          console.log(entity[property])
           break
       }
     })
 
     schemaPropertiesFile.push(`    ${[property]}: {
-      type: ${upperFirstLetter(type.toString())},
+      type: ${upperFirstLetter(type.toString())}${enumArray ? `,\n      enum: ${JSON.stringify(enumArray)},` : ','}${defaultProperty ? `\n      default: ${JSON.stringify(defaultProperty)},`: ''}
       unique: ${unique},
       require: ${require}
     },`)
@@ -211,6 +215,8 @@ export async function createEntity(nameEntity) {
     ...schemaPropertiesFile,
     '//! properties-end',
   ]
+  console.debug("🔴 -> file: file-service.ts -> line 217 -> createEntity -> schemaFile", schemaFile)
+
 
   const dtoFile = [
     '//! properties-start',
@@ -220,6 +226,8 @@ export async function createEntity(nameEntity) {
     ...dtoConstructorFile,
     '//! constructor-end',
   ]
+  console.debug("🔴 -> file: file-service.ts -> line 228 -> createEntity -> dtoFile", dtoFile)
+
 
   dtoFiles.map(async (file) => {
     const fileInString = parseArray(`${PATH_DTO_FILE}/${file}`)
@@ -236,6 +244,7 @@ export async function createEntity(nameEntity) {
   const fileSchemaInString = parseArray(
     `${PATH_SCHEMA_FILE}/${upperFirstLetter(nameEntity)}.schema.ts`
   )
+
   const schemaFileMergedString = await mergeFiles(
     'schema',
     schemaFile,
@@ -243,6 +252,7 @@ export async function createEntity(nameEntity) {
     'WITHOUT',
     'WITH'
   )
+
   await save(
     resolve(`${PATH_SCHEMA_FILE}/${upperFirstLetter(nameEntity)}.schema.ts`),
     schemaFileMergedString

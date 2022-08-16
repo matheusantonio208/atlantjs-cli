@@ -1,0 +1,185 @@
+{
+  "paths": {
+    "/<%= props.moduleNameLower %>/store": {
+      "post": {
+        "tags": ["<%= props.moduleNameUpper %>"],
+        "summary": "Create a <%= props.moduleNameUpper %>",
+        "description": "Create a new <%= props.moduleNameUpper %>",
+        "security": [{ "bearerAuth": []}],
+        "requestBody": {
+          "content": {
+            "application/json":  {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "$ref": "#/components/schemas/<%= props.moduleNameUpper %>"
+                },
+                "example": {
+                  "name": " ",
+                  "description": " "
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "<%= props.moduleNameUpper %> Created successfully!"
+          },
+          "400":{
+            "description": "<%= props.moduleNameUpper %> Already exists!"
+          },
+          "401": {
+            "description": "You must be authenticated to access this route"
+          }
+
+        }
+      }
+    },
+    "/<%= props.moduleNameLower %>/index/{id}" : {
+      "get": {
+        "tags": ["<%= props.moduleNameUpper %>"],
+        "summary": "Get <%= props.nameModelLowerCase> by id",
+        "description": "Get <%= props.nameModelLowerCase> by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of <%= props.moduleNameUpper %>"
+          }
+        ],
+        "responses": {
+          "200":{
+            "description": "Success",
+            "content":{
+              "application/json":{
+                "schema":{
+                  "type": "object",
+                  "items": {
+                    "$ref": "#/components/schemas/<%= props.moduleNameUpper %>"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "<%= props.moduleNameUpper %> Not Found"
+          },
+          "401": {
+            "description": "You must be authenticated to access this route"
+          }
+        }
+      }
+    },
+    "/<%= props.moduleNameLower %>/show": {
+      "get": {
+        "tags": ["<%= props.moduleNameUpper %>"],
+        "summary": "Get all <%= props.nameModelLowerCase>s",
+        "description": "Get all <%= props.nameModelLowerCase>s",
+        "responses": {
+          "200":{
+            "description": "Success",
+            "content":{
+              "application/json":{
+                "schema":{
+                  "type": "object",
+                  "items": {
+                    "$ref": "#/components/schemas/<%= props.moduleNameUpper %>"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "<%= props.moduleNameUpper %> Not Found"
+          },
+          "401": {
+            "description": "You must be authenticated to access this route"
+          }
+        }
+      }
+    },
+    "/<%= props.moduleNameLower %>/delete/{id}" : {
+      "delete": {
+        "tags": ["<%= props.moduleNameUpper %>"],
+        "summary": "Delete <%= props.nameModelLowerCase> by id",
+        "description": "Delete <%= props.nameModelLowerCase> by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of <%= props.moduleNameUpper %>"
+          }
+        ],
+        "responses": {
+          "204":{
+            "description": "<%= props.moduleNameUpper %> Successful deleted!",
+            "content":{
+              "application/json":{
+                "schema":{
+                  "type": "object",
+                  "items": {
+                    "$ref": "#/components/schemas/<%= props.moduleNameUpper %>"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "<%= props.moduleNameUpper %> Not Found"
+          },
+          "401": {
+            "description": "You must be authenticated to access this route"
+          }
+        }
+      }
+    },
+    "/<%= props.moduleNameLower %>/update/{id}" : {
+      "delete": {
+        "tags": ["<%= props.moduleNameUpper %>"],
+        "summary": "Update <%= props.nameModelLowerCase> by id",
+        "description": "Update <%= props.nameModelLowerCase> by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of <%= props.moduleNameUpper %>"
+          }
+        ],
+        "responses": {
+          "204":{
+            "description": "<%= props.moduleNameUpper %> successfully updated!",
+            "content":{
+              "application/json":{
+                "schema":{
+                  "type": "object",
+                  "items": {
+                    "$ref": "#/components/schemas/<%= props.moduleNameUpper %>"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "<%= props.moduleNameUpper %> Not Found"
+          },
+          "401": {
+            "description": "You must be authenticated to access this route"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schema": {
+      "<%= props.moduleNameUpper %>": {
+        "type": "object",
+        "properties": {
+          // ENTITY START
+
+          // ENTITY END
+        }
+      }
+    }
+  }
+}
