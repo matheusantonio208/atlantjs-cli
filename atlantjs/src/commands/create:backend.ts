@@ -29,7 +29,7 @@ module.exports = {
 
     const name: string = parameters.first || '.'
 
-    const FOLDER_API_TEMPLATE = 'back-end/api'
+    const FOLDER_API_TEMPLATE = 'backend/api'
     const FOLDER_CORE_TEMPLATE = 'core'
     const delay = 500
 
@@ -60,7 +60,7 @@ module.exports = {
     setTimeout(async () => {
       await clearTempFiles()
       await openProjectCommand(name)
-      await verifyConflictCommands(afterResolveConflict, name)
+      await verifyConflictCommands(afterResolveConflict, FOLDER_API_TEMPLATE, name)
     }, delay * 3)
 
     async function afterResolveConflict() {

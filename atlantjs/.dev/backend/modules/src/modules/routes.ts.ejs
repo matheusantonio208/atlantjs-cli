@@ -1,0 +1,11 @@
+//! imports-start
+import <%= props.moduleNameUpper %>Route from './<%= props.moduleNameUpper %>/<%= props.moduleNameLower %>.routes';
+//! imports-end
+
+class Routes {
+  constructor() {
+    //! routes-start
+    <%= props.moduleNameUpper %>Route(this.route, '/<%= props.moduleNameLower %>');
+    //! routes-end
+  }
+}

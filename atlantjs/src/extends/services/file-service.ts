@@ -9,7 +9,7 @@ import {
 } from 'fs'
 import * as rimraf from 'rimraf'
 import { FileName } from './files-structure'
-import { lowerFirstLetter, removeDuplicates, upperFirstLetter } from '../utils'
+import { lowerFirstLetter, removeDuplicates, upperCaseWord, upperFirstLetter } from '../utils'
 import { mergeFiles } from './merge-service'
 import simpleGit from 'simple-git'
 
@@ -143,7 +143,7 @@ export async function createFiles(
         const newFileName = `${file.target.replace(
           /[^\/]*$/,
           ''
-        )}${userFileName}.${fileExtension} - [IN CONFLICT]`
+        )}${userFileName}.${fileExtension} - [${upperCaseWord(moduleB)}]`
 
         await save(resolve(newFileName), fileWithChangesCliString)
       }
@@ -216,8 +216,6 @@ export async function createEntity(nameEntity) {
     ...schemaPropertiesFile,
     '//! properties-end',
   ]
-  console.debug("🔴 -> file: file-service.ts -> line 217 -> createEntity -> schemaFile", schemaFile)
-
 
   const dtoFile = [
     '//! properties-start',
@@ -227,8 +225,6 @@ export async function createEntity(nameEntity) {
     ...dtoConstructorFile,
     '//! constructor-end',
   ]
-  console.debug("🔴 -> file: file-service.ts -> line 228 -> createEntity -> dtoFile", dtoFile)
-
 
   dtoFiles.map(async (file) => {
     const fileInString = parseArray(`${PATH_DTO_FILE}/${file}`)
@@ -260,7 +256,7 @@ export async function createEntity(nameEntity) {
   )
 }
 
-export async function verifyConflicts(name) {
+export async function verifyConflicts(name, moduleB) {
   const git = simpleGit(name)
 
   try {
@@ -285,7 +281,7 @@ export async function verifyConflicts(name) {
             })
 
             const hasConflictTagInNameFile =
-              pathFile.indexOf('- [CONFLICT]') !== -1
+              pathFile.indexOf(`- [${upperCaseWord(moduleB)}]`) !== -1
 
             if (hasConflictTagInNameFile) {
               filesInConflict.push(file.path)

@@ -1,0 +1,14 @@
+import { model, Schema } from 'mongoose';
+
+import { <%= props.moduleNameUpper %>CreatedDto } from '../modules/<%= props.moduleNameUpper %>/dto/index.dto';
+
+const <%= props.moduleNameLower %>Schema = new Schema<<%= props.moduleNameUpper %>CreatedDto>(
+  {
+    //! properties-start
+    property: String,
+    //! properties-end
+},
+  { timestamps: true },
+);
+
+export default model<<%= props.moduleNameUpper %>CreatedDto>('<%= props.moduleNameLower %>s', <%= props.moduleNameLower %>Schema);

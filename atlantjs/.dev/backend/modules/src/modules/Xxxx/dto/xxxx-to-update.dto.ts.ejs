@@ -1,0 +1,11 @@
+export class <%= props.moduleNameUpper %>ToUpdateDto {
+  //! properties-start
+  property: string;
+  //! properties-end
+
+  constructor(body: <%= props.moduleNameUpper %>ToUpdateDto) {
+    //! constructor-start
+    this.property = body?.property;
+    //! constructor-end
+  }
+}

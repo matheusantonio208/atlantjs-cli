@@ -13,7 +13,7 @@ export function mergeFiles(
     fileWithChangesCli,
     fileUser,
     sections
-  )
+    )
 
   let fileMerged = []
   let rangeOriginFileUser = {}
@@ -88,6 +88,7 @@ export function getContentSections(fileWithChangesCli, fileUser, sections) {
 
   sections.map((section) => {
     const sectionUser = getContentSection(fileUser, section.name, section.tags)
+
     const sectionWithChangesCli = getContentSection(
       fileWithChangesCli,
       section.name,
@@ -116,26 +117,31 @@ export function getContentSection(file, section, tags) {
 }
 
 function getRangeSection(file, tags) {
-  let startLineArray = []
-  let endLineArray = []
-  const { start, end } = tags
 
-  file.map((content, line) => {
-    if (content.trim().startsWith(start.trim())) {
-      startLineArray.push(line)
+  let startLine = 0;
+  let endLine = 0;
+  let resultBreads = 1;
+
+  for(let i = 0; i < file.length; i ++) {
+
+    if(file[i].trim().includes(tags.start.trim())) {
+      startLine = i;
+      resultBreads ++
     }
-  })
 
-  file.map((content, line) => {
-    if(content.trim().startsWith(end.trim())) {
-      endLineArray.push(line)
+    if(file[i].includes('}')) {
+      resultBreads --;
     }
-  })
 
-  const startLine = startLineArray[0]
-  const endLine = endLineArray.find(line => {
-    return line > startLine
-  })
+    if(resultBreads === -1 ) {
+      endLine = i - 1
+      resultBreads --
+    }
+
+    if(!(resultBreads === -1  && file[i].includes('}') &&file[i].trim().includes(tags.start.trim()))) {
+      console.debug({i, cont: file[i]})
+    }
+}
 
   const amountLines = endLine - startLine
 

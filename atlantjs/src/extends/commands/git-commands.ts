@@ -51,12 +51,12 @@ export async function startRepositoryCommand(repoUrl): Promise<Response> {
   return { infoText: log.repository.info }
 }
 
-export async function verifyConflictCommands(callback, dirProject?) {
+export async function verifyConflictCommands(callback, moduleB, dirProject?) {
   try {
-    let { files, inConflict } = await verifyConflicts(dirProject ?? '.')
+    let { files, inConflict } = await verifyConflicts(dirProject ?? '.', moduleB)
 
     if (inConflict) {
-      ora(
+      const spinner = ora(
         `You have files to be merged: ${chalk.italic.cyan(`/${files}`)}`
       ).warn()
       const response = await prompt({
@@ -64,6 +64,8 @@ export async function verifyConflictCommands(callback, dirProject?) {
         name: 'inConflict',
         message: 'Corrected conflicts?',
       }).then(callback)
+
+      spinner.stop()
 
       inConflict = !response
       return inConflict

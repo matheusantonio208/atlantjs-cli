@@ -19,7 +19,7 @@ export function filesStructure(fileName: string) {
       file.push(
         {
           name: 'constructor',
-          tags: {
+          lineToStart: {
             start: '//! constructor-start',
             end: '//! constructor-end',
           },
